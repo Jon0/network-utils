@@ -9,9 +9,32 @@
 namespace unix {
 
 
+IPv4::IPv4(const std::array<unsigned char, 4> &addr)
+	:
+	addr(addr) {}
+
+
+filedesc_t IPv4::connect(int port) const {
+		// open socket
+		int sockfd = ::socket(AF_INET, SOCK_STREAM, 0);
+		if (sockfd < 0) {
+			c_error("ERROR opening socket");
+		}
+
+		// bind and listen on socket
+		sockaddr_in serv_addr;
+		serv_addr.sin_family = AF_INET;
+		serv_addr.sin_addr.s_addr = INADDR_ANY;
+		serv_addr.sin_port = htons(port);
+		if (::connect(sockfd, (struct sockaddr *) &serv_addr, sizeof(serv_addr)) < 0) {
+			c_error("ERROR on connecting");
+		}
+}
+
+
 filedesc_t listen_port(int port) {
 	// open socket
-	int sockfd = socket(AF_INET, SOCK_STREAM, 0);
+	int sockfd = ::socket(AF_INET, SOCK_STREAM, 0);
 	if (sockfd < 0) {
 		c_error("ERROR opening socket");
 	}
@@ -21,10 +44,10 @@ filedesc_t listen_port(int port) {
 	serv_addr.sin_family = AF_INET;
 	serv_addr.sin_addr.s_addr = INADDR_ANY;
 	serv_addr.sin_port = htons(port);
-	if (bind(sockfd, (struct sockaddr *) &serv_addr, sizeof(serv_addr)) < 0) {
+	if (::bind(sockfd, (struct sockaddr *) &serv_addr, sizeof(serv_addr)) < 0) {
 		c_error("ERROR on binding");
 	}
-	listen(sockfd, 5);
+	::listen(sockfd, 5);
 	return sockfd;
 }
 

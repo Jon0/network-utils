@@ -4,7 +4,23 @@ add_definitions(-std=c++14)
 set(CLIENT_NAME "nclient")
 set(SERVER_NAME "nserver")
 
-# executable files
+# client files
+file(GLOB CLIENT_FILES
+	"client.cpp"
+)
+
+add_executable(
+	${CLIENT_NAME}
+	${CLIENT_FILES}
+)
+
+target_link_libraries(
+	${CLIENT_NAME}
+	${NET_LIBRARY_NAME}
+)
+
+
+# server files
 file(GLOB SERVER_FILES
 	"server.cpp"
 )
