@@ -1,6 +1,6 @@
 #include "cluster.h"
 
-namespace core {
+namespace net {
 
 Cluster::Cluster() {}
 

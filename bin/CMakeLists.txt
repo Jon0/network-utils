@@ -1,10 +1,20 @@
 add_definitions(-std=c++14)
 
+# executable names
+set(CLIENT_NAME "nclient")
+set(SERVER_NAME "nserver")
+
 # executable files
-file(GLOB MAIN_FILES
-	"*.cpp"
+file(GLOB SERVER_FILES
+	"server.cpp"
 )
 
-set(EXECUTABLE_NAME "nstart")
-add_executable(${EXECUTABLE_NAME} ${MAIN_FILES})
-target_link_libraries(${EXECUTABLE_NAME} ${CORE_LIBRARY_NAME} ${MAIN_LIBRARY_NAME})
+add_executable(
+	${SERVER_NAME}
+	${SERVER_FILES}
+)
+
+target_link_libraries(
+	${SERVER_NAME}
+	${NET_LIBRARY_NAME}
+)

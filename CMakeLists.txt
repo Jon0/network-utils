@@ -2,8 +2,13 @@ cmake_minimum_required (VERSION 2.6)
 
 
 # project name
-set(CORE_LIBRARY_NAME "network-utils")
-project("${CORE_LIBRARY_NAME}")
+set(PROJECT_NAME "network-utils")
+project("${PROJECT_NAME}")
+
+# lib names
+set(NET_LIBRARY_NAME "libnet")
+set(UNIX_LIBRARY_NAME "libunix")
+set(UTIL_LIBRARY_NAME "libutil")
 
 
 # std threads
@@ -14,9 +19,10 @@ find_package(Threads REQUIRED)
 include_directories("${PROJECT_SOURCE_DIR}/")
 
 
-# build core library
-add_subdirectory(src)
-
+# build core libraries
+add_subdirectory(libutil)
+add_subdirectory(libunix)
+add_subdirectory(libnet)
 
 #build executable
 add_subdirectory(bin)

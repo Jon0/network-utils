@@ -1,6 +1,6 @@
 #include "machine.h"
 
-namespace core {
+namespace net {
 
 Machine::Machine() {}
 Machine::~Machine() {}

@@ -2,7 +2,7 @@
 
 #include "machine.h"
 
-namespace core {
+namespace net {
 
 class Cluster {
 public:
