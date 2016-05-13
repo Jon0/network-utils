@@ -2,7 +2,12 @@
 
 namespace net {
 
-Machine::Machine() {}
+Machine::Machine(const machine_key &id)
+    :
+    id(id),
+    fd(id.connect(2620)) {}
+
+
 Machine::~Machine() {}
 
 }

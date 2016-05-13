@@ -24,6 +24,11 @@ IPv4::IPv4(const std::array<unsigned char, 4> &addr)
 IPv4::~IPv4() {}
 
 
+std::array<unsigned char, 4> IPv4::parts() const {
+	return addr;
+}
+
+
 std::string IPv4::str() const {
 	std::vector<std::string> arr;
 	for (auto &e: addr) {
