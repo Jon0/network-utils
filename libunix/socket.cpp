@@ -24,6 +24,11 @@ IPv4::IPv4(const std::array<unsigned char, 4> &addr)
 IPv4::~IPv4() {}
 
 
+bool IPv4::operator==(const IPv4 &ip) const {
+	return addr == ip.addr;
+}
+
+
 std::array<unsigned char, 4> IPv4::parts() const {
 	return addr;
 }
@@ -35,6 +40,11 @@ std::string IPv4::str() const {
 		arr.push_back(std::to_string(e));
 	}
 	return util::concat(util::intersperse(std::string("."), arr));
+}
+
+
+millisecs IPv4::ping(size_t blocksize) const {
+	return millisecs(0);
 }
 
 

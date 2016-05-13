@@ -1,5 +1,6 @@
 #pragma once
 
+#include <initializer_list>
 #include <unordered_map>
 
 #include "libunix/socket.h"
@@ -7,14 +8,22 @@
 
 namespace net {
 
+
+using ip_map_t = std::unordered_map<machine_key, Machine>;
+
+
+ip_map_t list_to_map(const std::initializer_list<Machine> &m);
+
+
 class Cluster {
 public:
-    Cluster();
+    Cluster(const std::initializer_list<Machine> &m);
+    virtual ~Cluster();
 
-    void connect_machine(const Machine::machine_key &ip);
+    Cluster operator+(const machine_key &ip) const;
 
 private:
-    std::unordered_map<Machine::machine_key, Machine> ipmap;
+    const ip_map_t ipmap;
 
 };
 

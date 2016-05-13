@@ -2,7 +2,7 @@
 
 #include <libutil/strings.h>
 #include <libunix/socket.h>
-
+#include <libnet/protocol.h>
 
 int main(int argc, char *argv[]) {
     if (argc != 2) {
@@ -17,6 +17,7 @@ int main(int argc, char *argv[]) {
 
     unix::IPv4 addr({v.at(0), v.at(1), v.at(2), v.at(3)});
     std::cout << "connecting to " << addr.str() << "\n";
-    addr.connect(2620);
 
+    net::GroupRequest r(addr.connect(2620));
+    r.request_neighbors();
 }

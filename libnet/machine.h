@@ -4,15 +4,17 @@
 
 namespace net {
 
+using machine_key = unix::IPv4;
+
 class Machine {
 public:
-    using machine_key = unix::IPv4;
-
-    Machine(const machine_key &id);
+    Machine(const machine_key &ip);
     virtual ~Machine();
 
+    machine_key id() const;
+
 private:
-    const machine_key id;
+    const machine_key ipaddr;
     const unix::FileDesc fd;
 
 };

@@ -1,13 +1,20 @@
 #include <iostream>
 
 #include <libunix/socket.h>
+#include <libnet/cluster.h>
+#include <libnet/protocol.h>
 
 int main() {
-    std::cout << "listen on port 2620\n";
+    int port = 2620;
+    std::cout << "listen on port " << port << "\n";
+    unix::TcpAcceptor a(port);
+    net::Cluster c({});
 
-    unix::TcpAcceptor a(2620);
-
-    a.acceptfd();
-
-    std::cout << "connected\n";
+    bool running = true;
+    while (running) {
+        net::GroupRespond r(c);
+        unix::FileDesc fd(a.acceptfd());
+        std::cout << "connected\n";
+        r.respond(fd);
+    }
 }

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <sstream>
 
 namespace unix {
 
@@ -29,16 +30,31 @@ private:
 };
 
 
-class FileDesc {
+class FileDesc : public std::streambuf {
 public:
+    using traits_type = std::streambuf::traits_type;
+    static constexpr size_t buffersize = 1024;
+
     FileDesc(const filedesc_t &fd);
     ~FileDesc();
 
+    bool operator==(const FileDesc &f) const;
+
     filedesc_t id() const;
+
+    bool poll() const;
+
+protected:
+	int overflow(int c);
+	int underflow();
+	int sync();
 
 private:
     const filedesc_t fd;
+	char out_buffer[buffersize];
+	char in_buffer[buffersize + 16 - sizeof(size_t)];
 
 };
+
 
 }

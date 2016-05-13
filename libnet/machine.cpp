@@ -2,12 +2,17 @@
 
 namespace net {
 
-Machine::Machine(const machine_key &id)
+Machine::Machine(const machine_key &ip)
     :
-    id(id),
-    fd(id.connect(2620)) {}
+    ipaddr(ip),
+    fd(ip.connect(2620)) {}
 
 
 Machine::~Machine() {}
+
+
+machine_key Machine::id() const {
+    return ipaddr;
+}
 
 }
