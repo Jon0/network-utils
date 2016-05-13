@@ -18,6 +18,9 @@ public:
 class IPv4 : public NetAddress {
 public:
 	IPv4(const std::array<unsigned char, 4> &addr);
+	virtual ~IPv4();
+
+	std::string str() const;
 
 	filedesc_t connect(int port) const override;
 

@@ -12,12 +12,11 @@ int main(int argc, char *argv[]) {
     auto ip = util::split<std::vector, std::string>(argv[1], ".");
     std::vector<unsigned char> v;
     for (auto &e: ip) {
-        std::cout << e << ".";
         v.push_back(stoi(e));
     }
-    std::cout << "\n";
 
     unix::IPv4 addr({v.at(0), v.at(1), v.at(2), v.at(3)});
+    std::cout << "connecting to " << addr.str() << "\n";
     addr.connect(2620);
 
 }

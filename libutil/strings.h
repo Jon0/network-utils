@@ -58,4 +58,28 @@ List<Seq, Alloc> split(const Seq &str, const Seq &delim) {
 }
 
 
+template<template<typename, typename> typename List, typename T, typename Alloc = std::allocator<T>>
+List<T, Alloc> intersperse(const T &elem, List<T, Alloc> list) {
+    List<T, Alloc> result;
+    for (auto i = list.begin(); i < list.end() - 1; ++i) {
+        result.insert(result.end(), *i);
+        result.insert(result.end(), elem);
+    }
+    if (!list.empty()) {
+        result.insert(result.end(), list.back());
+    }
+    return result;
+}
+
+
+template<template<typename, typename> typename List, typename T, typename Alloc = std::allocator<T>>
+T concat(List<T, Alloc> list) {
+    T result;
+    for (auto &e: list) {
+        result += e;
+    }
+    return result;
+}
+
+
 }
