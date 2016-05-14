@@ -37,6 +37,7 @@ class FileDesc : public std::streambuf {
 public:
     using traits_type = std::streambuf::traits_type;
     static constexpr size_t buffersize = 1024;
+    static constexpr size_t diffsize = 16 - sizeof(size_t);
 
     FileDesc(const filedesc_t &fd);
     ~FileDesc();
@@ -55,9 +56,8 @@ protected:
 
 private:
     const filedesc_t fd;
-    bool eof_set;
 	char out_buffer[buffersize];
-	char in_buffer[buffersize + 16 - sizeof(size_t)];
+	char in_buffer[buffersize + diffsize];
 
 };
 

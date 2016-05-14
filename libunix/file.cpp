@@ -11,7 +11,7 @@ namespace unix {
 
 
 void c_error(const char *msg) {
-	std::cout << msg << std::string(::strerror(errno)) << "\n";
+	std::cout << msg << ": " << std::string(::strerror(errno)) << "\n";
 }
 
 
@@ -56,8 +56,7 @@ filedesc_t FilePath::open(fileopts_t opts) const {
 
 FileDesc::FileDesc(const filedesc_t &fd)
     :
-    fd(fd),
- 	eof_set(false) {
+    fd(fd) {
 	set_nonblocking(fd);
 	this->setg(in_buffer, in_buffer, in_buffer);
 	this->setp(out_buffer, out_buffer + buffersize - 1);
@@ -83,7 +82,8 @@ filedesc_t FileDesc::id() const {
 
 
 bool FileDesc::eof() const {
-	return eof_set;
+	// TODO
+	return false;
 }
 
 
@@ -134,9 +134,9 @@ int FileDesc::sync() {
 
 int FileDesc::underflow() {
 	if (this->gptr() == this->egptr()) {
-		std::streamsize pback(std::min(gptr() - eback(), std::ptrdiff_t(16 - sizeof(size_t))));
+		std::streamsize pback(std::min(gptr() - eback(), std::ptrdiff_t(diffsize)));
 		std::copy(this->egptr() - pback, this->egptr(), this->eback());
-		int done(::read(fd, eback() + pback, buffersize));
+		int done = ::read(fd, eback() + pback, buffersize);
 		if (done < 0) {
 			c_error("ERROR on read");
 			std::cout << "fd " << fd << ": read error " << done << "\n";

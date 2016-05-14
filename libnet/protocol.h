@@ -35,6 +35,8 @@ private:
     unix::FileDesc fd;
     std::iostream stream;
     std::string buffer;
+
+    void parse_buffer();
 };
 
 
