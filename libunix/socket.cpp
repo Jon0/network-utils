@@ -13,8 +13,35 @@ namespace unix {
 
 
 std::array<unsigned char, 4> parse_addr(const std::string &str) {
-
+	sockaddr_in serv_addr;
+	serv_addr.sin_family = AF_INET;
+	serv_addr.sin_port = 0;
+	if(inet_pton(AF_INET, str.c_str(), &serv_addr.sin_addr) <= 0) {
+	    c_error("ERROR on inet_pton");
+	}
+	return {0, 0, 0, 0};
 }
+
+
+filedesc_t listen_port(int port) {
+	// open socket
+	int sockfd = ::socket(AF_INET, SOCK_STREAM, 0);
+	if (sockfd < 0) {
+		c_error("ERROR opening socket");
+	}
+
+	// bind and listen on socket
+	sockaddr_in serv_addr;
+	serv_addr.sin_family = AF_INET;
+	serv_addr.sin_addr.s_addr = INADDR_ANY;
+	serv_addr.sin_port = htons(port);
+	if (::bind(sockfd, (struct sockaddr *) &serv_addr, sizeof(serv_addr)) < 0) {
+		c_error("ERROR on binding");
+	}
+	::listen(sockfd, 5);
+	return sockfd;
+}
+
 
 IPv4::IPv4(const std::array<unsigned char, 4> &addr)
 	:
@@ -40,6 +67,11 @@ std::string IPv4::str() const {
 		arr.push_back(std::to_string(e));
 	}
 	return util::concat(util::intersperse(std::string("."), arr));
+}
+
+
+AddressType IPv4::type() const {
+	return AddressType::ipv4;
 }
 
 
@@ -70,36 +102,75 @@ filedesc_t IPv4::connect(int port) const {
 }
 
 
-filedesc_t listen_port(int port) {
+IPv6::IPv6(const std::array<unsigned char, 12> &addr)
+	:
+	addr(addr) {}
+
+
+IPv6::~IPv6() {}
+
+
+bool IPv6::operator==(const IPv6 &ip) const {
+	return addr == ip.addr;
+}
+
+
+std::array<unsigned char, 12> IPv6::parts() const {
+	return addr;
+}
+
+
+std::string IPv6::str() const {
+	std::vector<std::string> arr;
+	for (auto &e: addr) {
+		arr.push_back(std::to_string(e));
+	}
+	return util::concat(util::intersperse(std::string("::"), arr));
+}
+
+
+AddressType IPv6::type() const {
+	return AddressType::ipv4;
+}
+
+
+millisecs IPv6::ping(size_t blocksize) const {
+	return millisecs(0);
+}
+
+
+filedesc_t IPv6::connect(int port) const {
 	// open socket
-	int sockfd = ::socket(AF_INET, SOCK_STREAM, 0);
+	int sockfd = ::socket(AF_INET6, SOCK_STREAM, 0);
 	if (sockfd < 0) {
 		c_error("ERROR opening socket");
 	}
 
-	// bind and listen on socket
+	// connect to remote
 	sockaddr_in serv_addr;
-	serv_addr.sin_family = AF_INET;
-	serv_addr.sin_addr.s_addr = INADDR_ANY;
+	serv_addr.sin_family = AF_INET6;
 	serv_addr.sin_port = htons(port);
-	if (::bind(sockfd, (struct sockaddr *) &serv_addr, sizeof(serv_addr)) < 0) {
-		c_error("ERROR on binding");
+	if(inet_pton(AF_INET6, str().c_str(), &serv_addr.sin_addr) <= 0) {
+        c_error("ERROR on inet_pton");
+    }
+
+
+	if (::connect(sockfd, (struct sockaddr *) &serv_addr, sizeof(serv_addr)) < 0) {
+		c_error("ERROR on connecting");
 	}
-	::listen(sockfd, 5);
-	return sockfd;
 }
 
 
 TcpAcceptor::TcpAcceptor(int port)
 	:
-	sockfd(listen_port(port)) {
+	FileDesc(listen_port(port)) {
 }
 
 
 int TcpAcceptor::acceptfd() const {
 	sockaddr_in cli_addr;
 	socklen_t clilen = sizeof(cli_addr);
-	int newsockfd = accept(sockfd.id(), (struct sockaddr *) &cli_addr, &clilen);
+	int newsockfd = accept(id(), (struct sockaddr *) &cli_addr, &clilen);
 	if (newsockfd < 0) {
 		c_error("ERROR on accept");
 	}

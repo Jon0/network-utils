@@ -12,6 +12,9 @@ using fileopts_t = int;
 void c_error(const char *msg);
 
 
+int set_nonblocking(int fd);
+
+
 class FilePath {
 public:
     FilePath(const std::string &p);

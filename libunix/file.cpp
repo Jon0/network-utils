@@ -1,5 +1,6 @@
 #include <iostream>
 
+#include <string.h>
 #include <fcntl.h>
 #include <poll.h>
 #include <unistd.h>
@@ -10,8 +11,16 @@ namespace unix {
 
 
 void c_error(const char *msg) {
-	perror(msg);
-	exit(1);
+	std::cout << std::string(::strerror(errno)) << "\n";
+}
+
+
+int set_nonblocking(int fd) {
+    int flags = ::fcntl(fd, F_GETFL, 0);
+    if (flags == -1) {
+        flags = 0;
+    }
+    return ::fcntl(fd, F_SETFL, flags | O_NONBLOCK);
 }
 
 
@@ -48,7 +57,7 @@ filedesc_t FilePath::open(fileopts_t opts) const {
 FileDesc::FileDesc(const filedesc_t &fd)
     :
     fd(fd) {
-	::fcntl(fd, F_SETFL, O_NONBLOCK);
+	set_nonblocking(fd);
 	this->setg(in_buffer, in_buffer, in_buffer);
 	this->setp(out_buffer, out_buffer + buffersize - 1);
 }

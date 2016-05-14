@@ -13,8 +13,10 @@ int main() {
     bool running = true;
     while (running) {
         net::GroupRespond r(c);
-        unix::FileDesc fd(a.acceptfd());
-        std::cout << "connected\n";
-        r.respond(fd);
+        if (a.poll()) {
+            unix::FileDesc fd(a.acceptfd());
+            std::cout << "connected\n";
+            r.respond(fd);
+        }
     }
 }

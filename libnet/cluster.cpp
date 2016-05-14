@@ -8,6 +8,7 @@ ip_map_t list_to_map(const std::initializer_list<Machine> &m) {
     for (auto i = m.begin(); i < m.end(); ++i) {
         result.insert(std::make_pair((*i).id(), *i));
     }
+    return result;
 }
 
 

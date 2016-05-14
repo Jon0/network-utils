@@ -9,14 +9,26 @@
 
 namespace unix {
 
+
 using millisecs = std::chrono::milliseconds;
 
+
+enum class AddressType {
+	ipv4,
+	ipv6
+};
+
+
 std::array<unsigned char, 4> parse_addr(const std::string &str);
+
+
+filedesc_t listen_port(int port);
 
 
 class NetAddress {
 public:
 	virtual ~NetAddress() {}
+	virtual AddressType type() const = 0;
 	virtual millisecs ping(size_t blocksize) const = 0;
 	virtual filedesc_t connect(int port) const = 0;
 };
@@ -32,6 +44,7 @@ public:
 	std::array<unsigned char, 4> parts() const;
 	std::string str() const;
 
+	AddressType type() const override;
 	millisecs ping(size_t blocksize) const override;
 	filedesc_t connect(int port) const override;
 
@@ -40,18 +53,31 @@ private:
 };
 
 
-filedesc_t listen_port(int port);
+class IPv6 : public NetAddress {
+public:
+	IPv6(const std::array<unsigned char, 12> &addr);
+	virtual ~IPv6();
+
+	bool operator==(const IPv6 &ip) const;
+
+	std::array<unsigned char, 12> parts() const;
+	std::string str() const;
+
+	AddressType type() const override;
+	millisecs ping(size_t blocksize) const override;
+	filedesc_t connect(int port) const override;
+
+private:
+	const std::array<unsigned char, 12> addr;
+
+};
 
 
-class TcpAcceptor {
+class TcpAcceptor : public FileDesc {
 public:
 	TcpAcceptor(int port);
 
 	filedesc_t acceptfd() const;
-
-private:
-	const FileDesc sockfd;
-
 };
 
 
