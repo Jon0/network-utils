@@ -12,11 +12,13 @@ int main() {
 
     bool running = true;
     while (running) {
-        net::GroupRespond r(c);
         if (a.poll()) {
-            unix::FileDesc fd(a.acceptfd());
             std::cout << "connected\n";
-            r.respond(fd);
+            net::GroupRespond r(c, a.acceptfd());
+            while (r.active()) {
+                r.update();
+            }
+            std::cout << "replied\n";
         }
     }
 }

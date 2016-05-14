@@ -45,6 +45,7 @@ public:
 
     filedesc_t id() const;
 
+    bool eof() const;
     bool poll() const;
 
 protected:
@@ -54,6 +55,7 @@ protected:
 
 private:
     const filedesc_t fd;
+    bool eof_set;
 	char out_buffer[buffersize];
 	char in_buffer[buffersize + 16 - sizeof(size_t)];
 

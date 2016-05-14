@@ -25,20 +25,26 @@ void GroupRequest::request_neighbors() {
 }
 
 
-GroupRespond::GroupRespond(const Cluster &c)
+GroupRespond::GroupRespond(const Cluster &c, const unix::filedesc_t &fd)
     :
-    cluster(c) {}
+    cluster(c),
+    fd(fd) {}
 
 
 GroupRespond::~GroupRespond() {}
 
 
-void GroupRespond::respond(unix::FileDesc &fd) {
-    std::iostream stream(&fd);
+bool GroupRespond::active() {
+    return !fd.eof();
+}
 
-    std::string buf;
-    stream >> buf;
-    std::cout << buf;
+
+void GroupRespond::update() {
+    std::iostream stream(&fd);
+    std::string temp;
+    stream >> temp;
+    buffer += temp;
+    std::cout << "buffer: " << buffer;
     stream << "response\n";
 }
 

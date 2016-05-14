@@ -11,7 +11,7 @@ namespace unix {
 
 
 void c_error(const char *msg) {
-	std::cout << std::string(::strerror(errno)) << "\n";
+	std::cout << msg << std::string(::strerror(errno)) << "\n";
 }
 
 
@@ -56,7 +56,8 @@ filedesc_t FilePath::open(fileopts_t opts) const {
 
 FileDesc::FileDesc(const filedesc_t &fd)
     :
-    fd(fd) {
+    fd(fd),
+ 	eof_set(false) {
 	set_nonblocking(fd);
 	this->setg(in_buffer, in_buffer, in_buffer);
 	this->setp(out_buffer, out_buffer + buffersize - 1);
@@ -78,6 +79,11 @@ bool FileDesc::operator==(const FileDesc &f) const {
 
 filedesc_t FileDesc::id() const {
     return fd;
+}
+
+
+bool FileDesc::eof() const {
+	return eof_set;
 }
 
 
@@ -118,8 +124,8 @@ int FileDesc::sync() {
 			this->pbump(size - done);
 		}
 		else {
+			c_error("ERROR on write");
 			std::cout << "fd " << fd << ": write error " << done << "\n";
-			return -1;
 		}
 	}
 	return this->pptr() != this->epptr()? 0: -1;
@@ -132,6 +138,7 @@ int FileDesc::underflow() {
 		std::copy(this->egptr() - pback, this->egptr(), this->eback());
 		int done(::read(fd, eback() + pback, buffersize));
 		if (done < 0) {
+			c_error("ERROR on read");
 			std::cout << "fd " << fd << ": read error " << done << "\n";
 		}
 		this->setg(this->eback(),

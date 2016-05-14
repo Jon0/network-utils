@@ -22,14 +22,16 @@ private:
 
 class GroupRespond {
 public:
-    GroupRespond(const Cluster &c);
+    GroupRespond(const Cluster &c, const unix::filedesc_t &fd);
     virtual ~GroupRespond();
 
-    void respond(unix::FileDesc &fd);
+    bool active();
+    void update();
 
 private:
     const Cluster cluster;
-
+    unix::FileDesc fd;
+    std::string buffer;
 };
 
 
