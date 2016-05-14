@@ -1,13 +1,11 @@
-#include <iostream>
-
 #include "protocol.h"
 
 namespace net {
 
 
-GroupRequest::GroupRequest(const unix::filedesc_t &fd)
+GroupRequest::GroupRequest(const unix::filedesc_t &desc)
     :
-    fd(fd) {}
+    fd(desc) {}
 
 
 GroupRequest::~GroupRequest() {}
@@ -25,10 +23,11 @@ void GroupRequest::request_neighbors() {
 }
 
 
-GroupRespond::GroupRespond(const Cluster &c, const unix::filedesc_t &fd)
+GroupRespond::GroupRespond(const Cluster &c, const unix::filedesc_t &desc)
     :
     cluster(c),
-    fd(fd) {}
+    fd(fd),
+    stream(&fd) {}
 
 
 GroupRespond::~GroupRespond() {}
@@ -40,11 +39,10 @@ bool GroupRespond::active() {
 
 
 void GroupRespond::update() {
-    std::iostream stream(&fd);
     std::string temp;
     stream >> temp;
     buffer += temp;
-    std::cout << "buffer: " << buffer;
+    std::cout << "buffer: " << buffer << "\n";
     stream << "response\n";
 }
 

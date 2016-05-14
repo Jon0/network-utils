@@ -1,5 +1,7 @@
 #pragma once
 
+#include <iostream>
+
 #include <libunix/file.h>
 
 #include "cluster.h"
@@ -9,7 +11,7 @@ namespace net {
 
 class GroupRequest {
 public:
-    GroupRequest(const unix::filedesc_t &fd);
+    GroupRequest(const unix::filedesc_t &desc);
     virtual ~GroupRequest();
 
     void request_neighbors();
@@ -22,7 +24,7 @@ private:
 
 class GroupRespond {
 public:
-    GroupRespond(const Cluster &c, const unix::filedesc_t &fd);
+    GroupRespond(const Cluster &c, const unix::filedesc_t &desc);
     virtual ~GroupRespond();
 
     bool active();
@@ -31,6 +33,7 @@ public:
 private:
     const Cluster cluster;
     unix::FileDesc fd;
+    std::iostream stream;
     std::string buffer;
 };
 
