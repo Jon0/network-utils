@@ -43,7 +43,7 @@ filedesc_t listen_port(int port) {
 }
 
 
-IPv4::IPv4(const std::array<unsigned char, 4> &addr)
+IPv4::IPv4(const std::array<unsigned char, IPv4::bytesize> &addr)
 	:
 	addr(addr) {}
 
@@ -56,7 +56,7 @@ bool IPv4::operator==(const IPv4 &ip) const {
 }
 
 
-std::array<unsigned char, 4> IPv4::parts() const {
+std::array<unsigned char, IPv4::bytesize> IPv4::parts() const {
 	return addr;
 }
 
@@ -102,7 +102,7 @@ filedesc_t IPv4::connect(int port) const {
 }
 
 
-IPv6::IPv6(const std::array<unsigned char, 12> &addr)
+IPv6::IPv6(const std::array<unsigned char, IPv6::bytesize> &addr)
 	:
 	addr(addr) {}
 
@@ -115,7 +115,7 @@ bool IPv6::operator==(const IPv6 &ip) const {
 }
 
 
-std::array<unsigned char, 12> IPv6::parts() const {
+std::array<unsigned char, IPv6::bytesize> IPv6::parts() const {
 	return addr;
 }
 

@@ -36,12 +36,14 @@ public:
 
 class IPv4 : public NetAddress {
 public:
-	IPv4(const std::array<unsigned char, 4> &addr);
+	static constexpr size_t bytesize = 4;
+
+	IPv4(const std::array<unsigned char, bytesize> &addr);
 	virtual ~IPv4();
 
 	bool operator==(const IPv4 &ip) const;
 
-	std::array<unsigned char, 4> parts() const;
+	std::array<unsigned char, bytesize> parts() const;
 	std::string str() const;
 
 	AddressType type() const override;
@@ -49,18 +51,20 @@ public:
 	filedesc_t connect(int port) const override;
 
 private:
-	const std::array<unsigned char, 4> addr;
+	const std::array<unsigned char, bytesize> addr;
 };
 
 
 class IPv6 : public NetAddress {
 public:
-	IPv6(const std::array<unsigned char, 12> &addr);
+	static constexpr size_t bytesize = 16;
+
+	IPv6(const std::array<unsigned char, bytesize> &addr);
 	virtual ~IPv6();
 
 	bool operator==(const IPv6 &ip) const;
 
-	std::array<unsigned char, 12> parts() const;
+	std::array<unsigned char, bytesize> parts() const;
 	std::string str() const;
 
 	AddressType type() const override;
@@ -68,7 +72,7 @@ public:
 	filedesc_t connect(int port) const override;
 
 private:
-	const std::array<unsigned char, 12> addr;
+	const std::array<unsigned char, bytesize> addr;
 
 };
 
@@ -89,9 +93,19 @@ namespace std {
 template<>
 struct hash<unix::IPv4> {
     size_t operator()(const unix::IPv4 &ip) const {
-        hash<array<unsigned char, 4>> hash;
+        hash<array<unsigned char, unix::IPv4::bytesize>> hash;
         return hash(ip.parts());
     }
 };
+
+
+template<>
+struct hash<unix::IPv6> {
+    size_t operator()(const unix::IPv6 &ip) const {
+        hash<array<unsigned char, unix::IPv6::bytesize>> hash;
+        return hash(ip.parts());
+    }
+};
+
 
 }

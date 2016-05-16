@@ -2,7 +2,7 @@
 
 #include <iostream>
 
-#include <libunix/file.h>
+#include <libunix/stream.h>
 
 #include "cluster.h"
 
@@ -17,7 +17,7 @@ public:
     void request_neighbors();
 
 private:
-    unix::FileDesc fd;
+    unix::BinaryStream stream;
 
 };
 
@@ -32,9 +32,8 @@ public:
 
 private:
     const Cluster cluster;
-    unix::FileDesc fd;
-    std::iostream stream;
-    std::string buffer;
+    unix::BinaryStream stream;
+    std::string input;
 
     void parse_buffer();
 };

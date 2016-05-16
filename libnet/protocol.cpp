@@ -5,19 +5,17 @@ namespace net {
 
 GroupRequest::GroupRequest(const unix::filedesc_t &desc)
     :
-    fd(desc) {}
+    stream(desc) {}
 
 
 GroupRequest::~GroupRequest() {}
 
 
 void GroupRequest::request_neighbors() {
-    std::iostream stream(&fd);
-
-    stream << "reqn\n";
+    stream.write_all("reqn\n");
 
     std::string response;
-    stream >> response;
+    stream.read_all(response);
 
     std::cout << "response: " << response << "\n";
 }
@@ -26,8 +24,7 @@ void GroupRequest::request_neighbors() {
 GroupRespond::GroupRespond(const Cluster &c, const unix::filedesc_t &desc)
     :
     cluster(c),
-    fd(desc),
-    stream(&fd) {}
+    stream(desc) {}
 
 
 GroupRespond::~GroupRespond() {}
@@ -39,19 +36,19 @@ bool GroupRespond::active() {
 
 
 void GroupRespond::update() {
-    if (fd.poll()) {
-        std::string temp;
-        stream >> temp;
-        buffer += temp;
+    std::string temp;
+    stream.read_all(temp);
+    if (!temp.empty()) {
+        input += temp;
         parse_buffer();
     }
 }
 
 
 void GroupRespond::parse_buffer() {
-    if (!buffer.empty()) {
-        std::cout << "buffer: " << buffer << "\n";
-        stream << "response\n";
+    if (!input.empty()) {
+        std::cout << "input: " << input << "\n";
+        stream.write_all("response\n");
     }
 }
 

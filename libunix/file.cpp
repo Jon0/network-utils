@@ -58,14 +58,11 @@ FileDesc::FileDesc(const filedesc_t &fd)
     :
     fd(fd) {
 	set_nonblocking(fd);
-	this->setg(in_buffer, in_buffer, in_buffer);
-	this->setp(out_buffer, out_buffer + buffersize - 1);
 }
 
 
 FileDesc::~FileDesc() {
     if (fd >= 0) {
-		sync();
 		::close(fd);
 	}
 }
@@ -97,57 +94,14 @@ bool FileDesc::poll() const {
 }
 
 
-int FileDesc::overflow(int c) {
-	if (!traits_type::eq_int_type(c, traits_type::eof())) {
-		*pptr() = traits_type::to_char_type(c);
-		pbump(1);
-	}
-	return sync() == -1
-		? traits_type::eof()
-		: traits_type::not_eof(c);
+std::streamsize FileDesc::read(char *buf, std::size_t count) const {
+	return ::read(fd, buf, count);
 }
 
 
-int FileDesc::sync() {
-	if (pbase() != pptr()) {
-		std::streamsize size(pptr() - pbase());
-		std::streamsize done(::write(fd, out_buffer, size));
-
-		// The code below assumes that it is success if the stream made
-		// some progress. Depending on the needs it may be more
-		// reasonable to consider it a success only if it managed to
-		// write the entire buffer and, e.g., loop a couple of times
-		// to try achieving this success.
-		if (done > 0) {
-			std::copy(this->pbase() + done, this->pptr(), this->pbase());
-			this->setp(this->pbase(), this->epptr());
-			this->pbump(size - done);
-		}
-		else {
-			c_error("ERROR on write");
-			std::cout << "fd " << fd << ": write error " << done << "\n";
-		}
-	}
-	return this->pptr() != this->epptr()? 0: -1;
+std::streamsize FileDesc::write(const char *buf, std::size_t count) const {
+	return ::write(fd, buf, count);
 }
 
-
-int FileDesc::underflow() {
-	if (this->gptr() == this->egptr()) {
-		std::streamsize pback(std::min(gptr() - eback(), std::ptrdiff_t(diffsize)));
-		std::copy(this->egptr() - pback, this->egptr(), this->eback());
-		int done = ::read(fd, eback() + pback, buffersize);
-		if (done < 0) {
-			c_error("ERROR on read");
-			std::cout << "fd " << fd << ": read error " << done << "\n";
-		}
-		this->setg(this->eback(),
-				   this->eback() + pback,
-				   this->eback() + pback + std::max(0, done));
-	}
-	return this->gptr() == this->egptr()
-		? traits_type::eof()
-		: traits_type::to_int_type(*this->gptr());
-}
 
 }
