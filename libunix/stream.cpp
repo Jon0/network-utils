@@ -22,7 +22,9 @@ bool BinaryStream::good() const {
 
 std::streamsize BinaryStream::read_all(std::string &buf) {
     std::streamsize done = fd.read(in_buffer, buffersize);
-    buf += std::string(in_buffer, done);
+    if (done > 0) {
+        buf += std::string(in_buffer, done);
+    }
     return done;
 }
 
