@@ -67,6 +67,7 @@ IPv4::addrport_t IPv4::port(unsigned short portnum) const {
 	serv_addr.sin_family = AF_INET;
 	serv_addr.sin_port = htons(portnum);
     std::memcpy(&serv_addr.sin_addr, &addr.at(0), IPv4::bytesize);
+    return serv_addr;
 }
 
 
@@ -127,6 +128,7 @@ IPv6::addrport_t IPv6::port(unsigned short portnum) const {
     serv_addr.sin6_family = AF_INET6;
     serv_addr.sin6_port = htons(portnum);
     std::memcpy(&serv_addr.sin6_addr, &addr.at(0), IPv6::bytesize);
+    return serv_addr;
 }
 
 

@@ -40,6 +40,26 @@ Socket::Socket(const NetAddress *l, const NetAddress *r, const filedesc_t &fd)
 }
 
 
+NetAddress *Socket::local() const {
+	return local_addr.get();
+}
+
+
+NetAddress *Socket::remote() const {
+	return remote_addr.get();
+}
+
+
+std::streamsize Socket::recv(char *buf, std::size_t count) const{
+	return 0;
+}
+
+
+std::streamsize Socket::send(const char *buf, std::size_t count) const {
+	return 0;
+}
+
+
 filedesc_t listen_ipv4(unsigned short portnum) {
 	// open socket
 	int sockfd = ::socket(AF_INET, SOCK_STREAM, 0);

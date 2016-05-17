@@ -22,6 +22,7 @@ class NetAddress {
 public:
 	virtual ~NetAddress() {}
 	virtual AddressType type() const = 0;
+	virtual std::string str() const = 0;
 	virtual std::unique_ptr<NetAddress> copy() const = 0;
 	virtual void connect(filedesc_t sockfd, unsigned short portnum) const = 0;
 };
@@ -39,15 +40,16 @@ public:
 	bool operator==(const IPv4 &ip) const;
 
 	std::array<unsigned char, bytesize> parts() const;
-	std::string str() const;
 	addrport_t port(unsigned short portnum) const;
 
 	AddressType type() const override;
+	std::string str() const override;
 	std::unique_ptr<NetAddress> copy() const override;
 	void connect(filedesc_t sockfd, unsigned short portnum) const override;
 
 private:
 	const std::array<unsigned char, bytesize> addr;
+
 };
 
 
@@ -63,10 +65,10 @@ public:
 	bool operator==(const IPv6 &ip) const;
 
 	std::array<unsigned char, bytesize> parts() const;
-	std::string str() const;
 	addrport_t port(unsigned short portnum) const;
 
 	AddressType type() const override;
+	std::string str() const override;
 	std::unique_ptr<NetAddress> copy() const override;
 	void connect(filedesc_t sockfd, unsigned short portnum) const override;
 

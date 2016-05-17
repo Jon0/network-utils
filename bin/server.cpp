@@ -13,8 +13,8 @@ int main() {
     bool running = true;
     while (running) {
         if (a.poll()) {
-            std::cout << "connected\n";
             unix::Socket s = a.accept();
+            std::cout << "connected " << s.remote()->str() << "\n";
             net::GroupRespond r(c, s.id());
             while (r.active()) {
                 r.update();
