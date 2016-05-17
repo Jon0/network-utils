@@ -1,10 +1,12 @@
 #pragma once
 
-#include "libunix/socket.h"
+#include "libunix/address.h"
 
 namespace net {
 
+
 using machine_key = unix::IPv4;
+
 
 class Machine {
 public:
@@ -18,5 +20,6 @@ private:
     const unix::FileDesc fd;
 
 };
+
 
 }
