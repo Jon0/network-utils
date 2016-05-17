@@ -107,7 +107,8 @@ std::streamsize FileDesc::checkerr(const std::streamsize &done) {
 	if (done < 0) {
 		c_error("ERROR fd " + std::to_string(fd));
 	}
-	if (done == EPIPE) {
+	if (done == EPIPE || done == 0) {
+		std::cout << "End of file reached\n";
 	    eofbit = true;
 	}
 	return done;
