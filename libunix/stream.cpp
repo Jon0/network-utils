@@ -19,7 +19,7 @@ bool BinaryStream::good() const {
 
 
 std::streamsize BinaryStream::read_all(std::string &buf) {
-    if (fd.poll()) {
+    if (fd.poll(POLLIN | POLLHUP)) {
         std::streamsize done = fd.read(in_buffer, buffersize);
         if (done > 0) {
             buf += std::string(in_buffer, done);

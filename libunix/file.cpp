@@ -2,7 +2,6 @@
 
 #include <string.h>
 #include <fcntl.h>
-#include <poll.h>
 #include <unistd.h>
 
 #include "file.h"
@@ -84,8 +83,8 @@ bool FileDesc::eof() const {
 }
 
 
-bool FileDesc::poll() const {
-    struct pollfd fds{fd, POLLIN, POLLIN};
+bool FileDesc::poll(short events) const {
+    struct pollfd fds{fd, events, events};
     int result = ::poll(&fds, 1, 0);
 	if (result == -1) {
 		c_error("ERROR on poll");

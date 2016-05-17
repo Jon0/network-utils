@@ -2,6 +2,8 @@
 
 #include <string>
 
+#include <poll.h>
+
 namespace unix {
 
 using filedesc_t = int;
@@ -42,7 +44,7 @@ public:
     filedesc_t id() const;
 
     bool eof() const;
-    bool poll() const;
+    bool poll(short events = POLLIN) const;
 
     std::streamsize read(char *buf, std::size_t count);
     std::streamsize write(const char *buf, std::size_t count);
