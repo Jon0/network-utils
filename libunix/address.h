@@ -19,9 +19,6 @@ enum class AddressType {
 };
 
 
-std::array<unsigned char, 4> parse_addr(const std::string &str);
-
-
 class NetAddress {
 public:
 	virtual ~NetAddress() {}
@@ -35,6 +32,7 @@ class IPv4 : public NetAddress {
 public:
 	static constexpr size_t bytesize = 4;
 
+	IPv4(const unsigned char addr[bytesize]);
 	IPv4(const std::array<unsigned char, bytesize> &addr);
 	virtual ~IPv4();
 
@@ -56,6 +54,7 @@ class IPv6 : public NetAddress {
 public:
 	static constexpr size_t bytesize = 16;
 
+	IPv6(const unsigned char addr[bytesize]);
 	IPv6(const std::array<unsigned char, bytesize> &addr);
 	virtual ~IPv6();
 
@@ -72,6 +71,12 @@ private:
 	const std::array<unsigned char, bytesize> addr;
 
 };
+
+
+IPv4 parse_ipv4(const std::string &host);
+
+
+IPv6 parse_ipv6(const std::string &host);
 
 
 }

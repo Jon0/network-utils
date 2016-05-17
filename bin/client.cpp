@@ -1,18 +1,12 @@
 #include <iostream>
 
 #include <libutil/strings.h>
-#include <libunix/socket.h>
+#include <libunix/address.h>
 #include <libnet/protocol.h>
 
 
 void test_connect(const std::string &addr) {
-    auto parts = util::split<std::vector, std::string>(addr, ".");
-    std::vector<unsigned char> v;
-    for (auto &e: parts) {
-        v.push_back(stoi(e));
-    }
-
-    unix::IPv4 ip({v.at(0), v.at(1), v.at(2), v.at(3)});
+    unix::IPv4 ip = unix::parse_ipv4(addr);
     std::cout << "connecting to " << ip.str() << "\n";
 
     net::GroupRequest r(ip.connect(2620));

@@ -5,8 +5,6 @@
 #include <netinet/in.h>
 #include <sys/socket.h>
 
-#include <libutil/strings.h>
-
 #include "socket.h"
 
 namespace unix {

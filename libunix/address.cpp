@@ -5,6 +5,7 @@
 #include <netinet/in.h>
 #include <sys/socket.h>
 
+#include <libutil/array.h>
 #include <libutil/strings.h>
 
 #include "address.h"
@@ -12,15 +13,27 @@
 namespace unix {
 
 
-std::array<unsigned char, 4> parse_addr(const std::string &str) {
-	sockaddr_in serv_addr;
-	serv_addr.sin_family = AF_INET;
-	serv_addr.sin_port = 0;
-	if(inet_pton(AF_INET, str.c_str(), &serv_addr.sin_addr) <= 0) {
-	    c_error("ERROR on inet_pton");
-	}
-	return {0, 0, 0, 0};
+IPv4 parse_ipv4(const std::string &host) {
+    unsigned char buf[sizeof(struct in_addr)];
+	if (inet_pton(AF_INET, host.c_str(), &buf) <= 0) {
+        c_error("ERROR on inet_pton");
+    }
+	return IPv4(buf);
 }
+
+
+IPv6 parse_ipv6(const std::string &host) {
+    unsigned char buf[sizeof(struct in6_addr)];
+	if (inet_pton(AF_INET6, host.c_str(), &buf) <= 0) {
+        c_error("ERROR on inet_pton");
+    }
+	return IPv6(buf);
+}
+
+
+IPv4::IPv4(const unsigned char addr[IPv4::bytesize])
+    :
+    addr(util::to_array<unsigned char, IPv4::bytesize>(addr)) {}
 
 
 IPv4::IPv4(const std::array<unsigned char, IPv4::bytesize> &addr)
@@ -80,6 +93,11 @@ filedesc_t IPv4::connect(int port) const {
 		c_error("ERROR on connecting");
 	}
 }
+
+
+IPv6::IPv6(const unsigned char addr[bytesize])
+    :
+    addr(util::to_array<unsigned char, IPv6::bytesize>(addr)) {}
 
 
 IPv6::IPv6(const std::array<unsigned char, IPv6::bytesize> &addr)
