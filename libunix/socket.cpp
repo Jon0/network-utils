@@ -17,6 +17,7 @@ filedesc_t ipv4_socket(int socket_type, int protocol) {
 	if (sockfd < 0) {
 		c_error("ERROR opening socket");
 	}
+	return sockfd;
 }
 
 
@@ -27,6 +28,7 @@ filedesc_t ipv6_socket(int socket_type, int protocol) {
 	if (sockfd < 0) {
 		c_error("ERROR opening socket");
 	}
+	return sockfd;
 }
 
 
@@ -60,8 +62,8 @@ filedesc_t listen_ipv4(unsigned short portnum) {
 
 TcpAcceptor::TcpAcceptor(int port)
 	:
-	FileDesc(listen_ipv4(port)) {
-}
+	FileDesc(listen_ipv4(port)),
+ 	local_addr(std::make_unique<IPv4>(std::array<unsigned char, 4>({127, 0, 0, 1}))) {}
 
 
 Socket TcpAcceptor::accept() const {
