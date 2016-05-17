@@ -14,7 +14,8 @@ int main() {
     while (running) {
         if (a.poll()) {
             std::cout << "connected\n";
-            net::GroupRespond r(c, a.acceptfd());
+            unix::Socket s = a.accept();
+            net::GroupRespond r(c, s.id());
             while (r.active()) {
                 r.update();
             }

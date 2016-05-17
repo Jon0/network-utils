@@ -16,8 +16,10 @@ public:
     std::streamsize read_all(std::string &buf);
     std::streamsize write_all(const std::string &buf);
 
+    bool matchstr(const std::string &str);
+
 private:
-    const FileDesc fd;
+    FileDesc fd;
 	char in_buffer[buffersize];
 	char out_buffer[buffersize];
 

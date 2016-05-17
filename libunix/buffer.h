@@ -23,7 +23,7 @@ protected:
 	int overflow(int c) override;
 
 private:
-    const FileDesc fd;
+    FileDesc fd;
 	char out_buffer[buffersize];
 	char in_buffer[buffersize + diffsize];
 

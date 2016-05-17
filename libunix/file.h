@@ -8,7 +8,7 @@ using filedesc_t = int;
 using fileopts_t = int;
 
 
-void c_error(const char *msg);
+void c_error(const std::string &msg);
 
 
 int set_nonblocking(int fd);
@@ -44,11 +44,14 @@ public:
     bool eof() const;
     bool poll() const;
 
-    std::streamsize read(char *buf, std::size_t count) const;
-    std::streamsize write(const char *buf, std::size_t count) const;
+    std::streamsize read(char *buf, std::size_t count);
+    std::streamsize write(const char *buf, std::size_t count);
 
 private:
+    std::streamsize checkerr(const std::streamsize &done);
+
     const filedesc_t fd;
+    bool eofbit;
 
 };
 

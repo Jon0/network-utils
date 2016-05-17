@@ -10,7 +10,7 @@
 namespace unix {
 
 
-void c_error(const char *msg) {
+void c_error(const std::string &msg) {
 	std::cout << msg << ": " << std::string(::strerror(errno)) << "\n";
 }
 
@@ -56,7 +56,8 @@ filedesc_t FilePath::open(fileopts_t opts) const {
 
 FileDesc::FileDesc(const filedesc_t &fd)
     :
-    fd(fd) {
+    fd(fd),
+ 	eofbit(false) {
 	set_nonblocking(fd);
 }
 
@@ -79,8 +80,7 @@ filedesc_t FileDesc::id() const {
 
 
 bool FileDesc::eof() const {
-	// TODO
-	return false;
+	return eofbit;
 }
 
 
@@ -94,13 +94,24 @@ bool FileDesc::poll() const {
 }
 
 
-std::streamsize FileDesc::read(char *buf, std::size_t count) const {
-	return ::read(fd, buf, count);
+std::streamsize FileDesc::read(char *buf, std::size_t count) {
+	return checkerr(::read(fd, buf, count));
 }
 
 
-std::streamsize FileDesc::write(const char *buf, std::size_t count) const {
-	return ::write(fd, buf, count);
+std::streamsize FileDesc::write(const char *buf, std::size_t count) {
+	return checkerr(::write(fd, buf, count));
+}
+
+
+std::streamsize FileDesc::checkerr(const std::streamsize &done) {
+	if (done < 0) {
+		c_error("ERROR fd " + std::to_string(fd));
+	}
+	if (done == EPIPE) {
+	    eofbit = true;
+	}
+	return done;
 }
 
 

@@ -1,3 +1,5 @@
+#include <libunix/socket.h>
+
 #include "machine.h"
 
 namespace net {
@@ -5,7 +7,9 @@ namespace net {
 Machine::Machine(const machine_key &ip)
     :
     ipaddr(ip),
-    fd(ip.connect(2620)) {}
+    fd(unix::ipv4_socket()) {
+    ip.connect(fd.id(), 2620);
+}
 
 
 Machine::~Machine() {}

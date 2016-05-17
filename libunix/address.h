@@ -1,16 +1,15 @@
 #pragma once
 
 #include <array>
-#include <chrono>
+#include <memory>
 #include <string>
+
+#include <netinet/in.h>
 
 #include "libutil/hash.h"
 #include "file.h"
 
 namespace unix {
-
-
-using millisecs = std::chrono::milliseconds;
 
 
 enum class AddressType {
@@ -23,14 +22,15 @@ class NetAddress {
 public:
 	virtual ~NetAddress() {}
 	virtual AddressType type() const = 0;
-	virtual millisecs ping(size_t blocksize) const = 0;
-	virtual filedesc_t connect(int port) const = 0;
+	virtual std::unique_ptr<NetAddress> copy() const = 0;
+	virtual void connect(filedesc_t sockfd, unsigned short portnum) const = 0;
 };
 
 
 class IPv4 : public NetAddress {
 public:
 	static constexpr size_t bytesize = 4;
+	using addrport_t = sockaddr_in;
 
 	IPv4(const unsigned char addr[bytesize]);
 	IPv4(const std::array<unsigned char, bytesize> &addr);
@@ -40,10 +40,11 @@ public:
 
 	std::array<unsigned char, bytesize> parts() const;
 	std::string str() const;
+	addrport_t port(unsigned short portnum) const;
 
 	AddressType type() const override;
-	millisecs ping(size_t blocksize) const override;
-	filedesc_t connect(int port) const override;
+	std::unique_ptr<NetAddress> copy() const override;
+	void connect(filedesc_t sockfd, unsigned short portnum) const override;
 
 private:
 	const std::array<unsigned char, bytesize> addr;
@@ -53,6 +54,7 @@ private:
 class IPv6 : public NetAddress {
 public:
 	static constexpr size_t bytesize = 16;
+	using addrport_t = sockaddr_in6;
 
 	IPv6(const unsigned char addr[bytesize]);
 	IPv6(const std::array<unsigned char, bytesize> &addr);
@@ -62,10 +64,11 @@ public:
 
 	std::array<unsigned char, bytesize> parts() const;
 	std::string str() const;
+	addrport_t port(unsigned short portnum) const;
 
 	AddressType type() const override;
-	millisecs ping(size_t blocksize) const override;
-	filedesc_t connect(int port) const override;
+	std::unique_ptr<NetAddress> copy() const override;
+	void connect(filedesc_t sockfd, unsigned short portnum) const override;
 
 private:
 	const std::array<unsigned char, bytesize> addr;

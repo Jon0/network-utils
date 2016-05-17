@@ -7,16 +7,14 @@ namespace unix {
 
 BinaryStream::BinaryStream(const filedesc_t &fd)
     :
-    fd(fd) {
-
-}
+    fd(fd) {}
 
 
 BinaryStream::~BinaryStream() {}
 
 
 bool BinaryStream::good() const {
-    return true;
+    return !fd.eof();
 }
 
 
@@ -31,6 +29,12 @@ std::streamsize BinaryStream::read_all(std::string &buf) {
 
 std::streamsize BinaryStream::write_all(const std::string &buf) {
     return fd.write(buf.c_str(), buf.size());
+}
+
+
+bool BinaryStream::matchstr(const std::string &str) {
+    // TODO
+    return false;
 }
 
 

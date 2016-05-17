@@ -2,7 +2,6 @@
 
 #include <unistd.h>
 #include <arpa/inet.h>
-#include <netinet/in.h>
 #include <sys/socket.h>
 
 #include <libutil/array.h>
@@ -63,33 +62,29 @@ std::string IPv4::str() const {
 }
 
 
+IPv4::addrport_t IPv4::port(unsigned short portnum) const {
+	IPv4::addrport_t serv_addr;
+	serv_addr.sin_family = AF_INET;
+	serv_addr.sin_port = htons(portnum);
+    std::memcpy(&serv_addr.sin_addr, &addr.at(0), IPv4::bytesize);
+}
+
+
 AddressType IPv4::type() const {
 	return AddressType::ipv4;
 }
 
 
-millisecs IPv4::ping(size_t blocksize) const {
-	return millisecs(0);
+std::unique_ptr<NetAddress> IPv4::copy() const {
+    return std::make_unique<IPv4>(*this);
 }
 
 
-filedesc_t IPv4::connect(int port) const {
-	// open socket
-	int sockfd = ::socket(AF_INET, SOCK_STREAM, 0);
-	if (sockfd < 0) {
-		c_error("ERROR opening socket");
-	}
+void IPv4::connect(filedesc_t sockfd, unsigned short portnum) const {
 
 	// connect to remote
-	sockaddr_in serv_addr;
-	serv_addr.sin_family = AF_INET;
-	serv_addr.sin_port = htons(port);
-	if(inet_pton(AF_INET, str().c_str(), &serv_addr.sin_addr) <= 0) {
-        c_error("ERROR on inet_pton");
-    }
-
-
-	if (::connect(sockfd, (struct sockaddr *) &serv_addr, sizeof(serv_addr)) < 0) {
+    auto addrport = port(portnum);
+	if (::connect(sockfd, (struct sockaddr *) &addrport, sizeof(IPv4::addrport_t)) < 0) {
 		c_error("ERROR on connecting");
 	}
 }
@@ -127,33 +122,29 @@ std::string IPv6::str() const {
 }
 
 
+IPv6::addrport_t IPv6::port(unsigned short portnum) const {
+	IPv6::addrport_t serv_addr;
+    serv_addr.sin6_family = AF_INET6;
+    serv_addr.sin6_port = htons(portnum);
+    std::memcpy(&serv_addr.sin6_addr, &addr.at(0), IPv6::bytesize);
+}
+
+
 AddressType IPv6::type() const {
-	return AddressType::ipv4;
+	return AddressType::ipv6;
 }
 
 
-millisecs IPv6::ping(size_t blocksize) const {
-	return millisecs(0);
+std::unique_ptr<NetAddress> IPv6::copy() const {
+    return std::make_unique<IPv6>(*this);
 }
 
 
-filedesc_t IPv6::connect(int port) const {
-	// open socket
-	int sockfd = ::socket(AF_INET6, SOCK_STREAM, 0);
-	if (sockfd < 0) {
-		c_error("ERROR opening socket");
-	}
+void IPv6::connect(filedesc_t sockfd, unsigned short portnum) const {
 
 	// connect to remote
-	sockaddr_in serv_addr;
-	serv_addr.sin_family = AF_INET6;
-	serv_addr.sin_port = htons(port);
-	if(inet_pton(AF_INET6, str().c_str(), &serv_addr.sin_addr) <= 0) {
-        c_error("ERROR on inet_pton");
-    }
-
-
-	if (::connect(sockfd, (struct sockaddr *) &serv_addr, sizeof(serv_addr)) < 0) {
+    auto addrport = port(portnum);
+	if (::connect(sockfd, (struct sockaddr *) &addrport, sizeof(IPv6::addrport_t)) < 0) {
 		c_error("ERROR on connecting");
 	}
 }
