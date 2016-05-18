@@ -5,6 +5,7 @@
 
 #include "libunix/socket.h"
 #include "machine.h"
+#include "queue.h"
 
 namespace net {
 
@@ -22,12 +23,22 @@ public:
 
     Cluster operator+(const unit_t &m) const;
 
-    void update();
+    Queue update();
 
 private:
     map_t ipmap;
 
 };
+
+
+class ClusterEvent : public Event {
+public:
+    using modify_t = Cluster;
+
+    bool apply(modify_t m) const;
+};
+
+
 
 
 }

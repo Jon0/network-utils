@@ -3,6 +3,13 @@
 #include <libunix/socket.h>
 #include <libnet/cluster.h>
 #include <libnet/protocol.h>
+#include <libnet/queue.h>
+
+void queue_thread() {
+    net::Queue q;
+
+}
+
 
 int main() {
     int port = 2620;

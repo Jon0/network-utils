@@ -35,7 +35,7 @@ Cluster Cluster::operator+(const Cluster::unit_t &m) const {
 }
 
 
-void Cluster::update() {
+Queue Cluster::update() {
     GroupRespond r(ipmap);
     for (auto &i : ipmap) {
         Machine &m = i.second;
@@ -43,6 +43,7 @@ void Cluster::update() {
             m.update(&r);
         }
     }
+    return Queue();
 }
 
 
