@@ -4,19 +4,35 @@
 
 namespace net {
 
-Machine::Machine(const machine_key &ip)
+
+Machine::Machine(const unix::Socket &s)
     :
-    ipaddr(ip),
-    fd(unix::ipv4_socket()) {
-    ip.connect(fd.id(), 2620);
-}
+    socket(s),
+    stream(&socket) {}
 
 
 Machine::~Machine() {}
 
 
-machine_key Machine::id() const {
-    return ipaddr;
+Machine::key_t Machine::id() const {
+    return socket.remote()->str();
 }
+
+
+bool Machine::connected() const {
+    return stream.good();
+}
+
+
+void Machine::update(Handler *hdl) {
+    std::string temp;
+    stream.read_all(temp);
+    if (!temp.empty()) {
+        input += temp;
+        std::string s = hdl->recv_msg(input);
+        stream.write_all(s);
+    }
+}
+
 
 }

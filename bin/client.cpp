@@ -9,9 +9,10 @@ void test_connect(const std::string &addr) {
     unix::IPv4 ip = unix::parse_ipv4(addr);
     std::cout << "connecting to " << ip.str() << "\n";
 
-    auto fd = unix::ipv4_socket();
-    ip.connect(fd, 2620);
-    net::GroupRequest r(fd);
+    auto sock = unix::ipv4_socket();
+    ip.connect(sock, 2620);
+    unix::FileDesc fd(sock);
+    net::GroupRequest r(&fd);
     r.request_neighbors();
 }
 

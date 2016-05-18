@@ -9,22 +9,25 @@
 namespace net {
 
 
-using ip_map_t = std::unordered_map<machine_key, Machine>;
-
-
-ip_map_t list_to_map(const std::initializer_list<Machine> &m);
-
-
 class Cluster {
 public:
-    Cluster(const std::initializer_list<Machine> &m);
+    using unit_t = Machine;
+    using map_t = std::unordered_map<unit_t::key_t, unit_t>;
+
+    static map_t list_to_map(const std::initializer_list<unit_t> &m);
+
+    Cluster(const map_t &m);
+    Cluster(const std::initializer_list<unit_t> &m);
     virtual ~Cluster();
 
-    Cluster operator+(const machine_key &ip) const;
+    Cluster operator+(const unit_t &m) const;
+
+    void update();
 
 private:
-    const ip_map_t ipmap;
+    map_t ipmap;
 
 };
+
 
 }

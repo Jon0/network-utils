@@ -8,7 +8,7 @@ class BinaryStream {
 public:
     static constexpr size_t buffersize = 1024;
 
-    BinaryStream(const filedesc_t &fd);
+    BinaryStream(FileDesc *fd);
     virtual ~BinaryStream();
 
     bool good() const;
@@ -19,7 +19,7 @@ public:
     bool matchstr(const std::string &str);
 
 private:
-    FileDesc fd;
+    FileDesc *fd;
 	char in_buffer[buffersize];
 	char out_buffer[buffersize];
 

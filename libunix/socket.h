@@ -17,13 +17,14 @@ filedesc_t ipv6_socket(int socket_type = SOCK_STREAM, int protocol = 0);
 
 class Socket : public FileDesc {
 public:
+	Socket(const Socket &s);
 	Socket(const NetAddress *l, const NetAddress *r, const filedesc_t &fd);
 
 	NetAddress *local() const;
 	NetAddress *remote() const;
 
-	std::streamsize recv(char *buf, std::size_t count) const;
-	std::streamsize send(const char *buf, std::size_t count) const;
+	std::streamsize recv(char *buf, std::size_t count);
+	std::streamsize send(const char *buf, std::size_t count);
 
 private:
 	std::unique_ptr<NetAddress> local_addr;

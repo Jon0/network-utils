@@ -8,18 +8,15 @@ int main() {
     int port = 2620;
     std::cout << "listen on port " << port << "\n";
     unix::TcpAcceptor a(port);
-    net::Cluster c({});
+    net::Cluster neighbors({});
 
     bool running = true;
     while (running) {
         if (a.poll()) {
             unix::Socket s = a.accept();
+            neighbors = neighbors + net::Machine(s);
             std::cout << "connected " << s.remote()->str() << "\n";
-            net::GroupRespond r(c, s.id());
-            while (r.active()) {
-                r.update();
-            }
-            std::cout << "replied\n";
         }
+        neighbors.update();
     }
 }

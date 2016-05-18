@@ -2,7 +2,4 @@
 
 namespace net {
 
-Channel::Channel() {}
-Channel::~Channel() {}
-
 }

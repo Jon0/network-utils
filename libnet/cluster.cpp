@@ -1,10 +1,13 @@
+#include <algorithm>
+
 #include "cluster.h"
+#include "protocol.h"
 
 namespace net {
 
 
-ip_map_t list_to_map(const std::initializer_list<Machine> &m) {
-    ip_map_t result;
+Cluster::map_t Cluster::list_to_map(const std::initializer_list<Cluster::unit_t> &m) {
+    Cluster::map_t result;
     for (auto i = m.begin(); i < m.end(); ++i) {
         result.insert(std::make_pair((*i).id(), *i));
     }
@@ -12,7 +15,12 @@ ip_map_t list_to_map(const std::initializer_list<Machine> &m) {
 }
 
 
-Cluster::Cluster(const std::initializer_list<Machine> &m)
+Cluster::Cluster(const map_t &m)
+    :
+    ipmap(m) {}
+
+
+Cluster::Cluster(const std::initializer_list<Cluster::unit_t> &m)
     :
     ipmap(list_to_map(m)) {}
 
@@ -20,8 +28,21 @@ Cluster::Cluster(const std::initializer_list<Machine> &m)
 Cluster::~Cluster() {}
 
 
-Cluster Cluster::operator+(const machine_key &ip) const {
-    return *this;
+Cluster Cluster::operator+(const Cluster::unit_t &m) const {
+    map_t result = ipmap;
+    result.insert(std::make_pair(m.id(), m));
+    return Cluster(result);
+}
+
+
+void Cluster::update() {
+    GroupRespond r(ipmap);
+    for (auto &i : ipmap) {
+        Machine &m = i.second;
+        if (m.connected()) {
+            m.update(&r);
+        }
+    }
 }
 
 

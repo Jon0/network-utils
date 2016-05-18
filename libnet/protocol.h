@@ -4,17 +4,20 @@
 
 #include <libunix/stream.h>
 
+#include "channel.h"
 #include "cluster.h"
 
 namespace net {
 
 
-class GroupRequest {
+class GroupRequest : public Handler {
 public:
-    GroupRequest(const unix::filedesc_t &desc);
+    GroupRequest(unix::FileDesc *desc);
     virtual ~GroupRequest();
 
     void request_neighbors();
+
+    std::string recv_msg(const std::string &msg) override;
 
 private:
     unix::BinaryStream stream;
@@ -22,20 +25,16 @@ private:
 };
 
 
-class GroupRespond {
+class GroupRespond : public Handler {
 public:
-    GroupRespond(const Cluster &c, const unix::filedesc_t &desc);
+    GroupRespond(const Cluster &c);
     virtual ~GroupRespond();
 
-    bool active();
-    void update();
+    std::string recv_msg(const std::string &msg) override;
 
 private:
     const Cluster cluster;
-    unix::BinaryStream stream;
-    std::string input;
 
-    void parse_buffer();
 };
 
 

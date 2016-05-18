@@ -32,6 +32,14 @@ filedesc_t ipv6_socket(int socket_type, int protocol) {
 }
 
 
+Socket::Socket(const Socket &s)
+ 	:
+	FileDesc(s.id()),
+ 	local_addr(s.local_addr->copy()),
+	remote_addr(s.remote_addr->copy()) {
+}
+
+
 Socket::Socket(const NetAddress *l, const NetAddress *r, const filedesc_t &fd)
 	:
 	FileDesc(fd),
@@ -50,12 +58,12 @@ NetAddress *Socket::remote() const {
 }
 
 
-std::streamsize Socket::recv(char *buf, std::size_t count) const{
+std::streamsize Socket::recv(char *buf, std::size_t count) {
 	return 0;
 }
 
 
-std::streamsize Socket::send(const char *buf, std::size_t count) const {
+std::streamsize Socket::send(const char *buf, std::size_t count) {
 	return 0;
 }
 

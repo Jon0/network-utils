@@ -1,23 +1,28 @@
 #pragma once
 
-#include "libunix/address.h"
+#include <libunix/socket.h>
+#include <libunix/stream.h>
+
+#include "channel.h"
 
 namespace net {
 
 
-using machine_key = unix::IPv4;
-
-
 class Machine {
 public:
-    Machine(const machine_key &ip);
+    using key_t = std::string;
+
+    Machine(const unix::Socket &s);
     virtual ~Machine();
 
-    machine_key id() const;
+    key_t id() const;
+    bool connected() const;
+    void update(Handler *hdl);
 
 private:
-    const machine_key ipaddr;
-    const unix::FileDesc fd;
+    unix::Socket socket;
+    unix::BinaryStream stream;
+    std::string input;
 
 };
 
