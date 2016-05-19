@@ -5,7 +5,7 @@
 
 #include "libunix/socket.h"
 #include "machine.h"
-#include "queue.h"
+#include "process.h"
 
 namespace net {
 
@@ -21,6 +21,7 @@ public:
     Cluster(const std::initializer_list<unit_t> &m);
     virtual ~Cluster();
 
+    size_t size() const;
     Cluster operator+(const unit_t &m) const;
 
     Queue update();
@@ -31,11 +32,18 @@ private:
 };
 
 
-class ClusterEvent : public Event {
+class ClusterJoin : public Event {
 public:
     using modify_t = Cluster;
 
     bool apply(modify_t m) const;
+};
+
+
+class ClusterAccept : public Producer {
+public:
+    void poll(Queue &q) override {}
+
 };
 
 

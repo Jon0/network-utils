@@ -28,6 +28,11 @@ Cluster::Cluster(const std::initializer_list<Cluster::unit_t> &m)
 Cluster::~Cluster() {}
 
 
+size_t Cluster::size() const {
+    return ipmap.size();
+}
+
+
 Cluster Cluster::operator+(const Cluster::unit_t &m) const {
     map_t result = ipmap;
     result.insert(std::make_pair(m.id(), m));

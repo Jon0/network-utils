@@ -1,9 +1,52 @@
 #pragma once
 
+#include <memory>
 #include <unordered_map>
 #include <vector>
 
 namespace util {
+
+
+template<typename T>
+class ClassRef {
+public:
+    ~ClassRef() {}
+
+    size_t ref_count;
+    size_t object_size;
+    size_t object_state;
+
+private:
+    const T state;
+
+};
+
+
+template<typename T>
+class ClassSeq {
+public:
+    ~ClassSeq() {}
+
+    const size_t object_size;
+    const size_t instance_id;
+
+private:
+    std::vector<std::weak_ptr<const T>> states;
+
+};
+
+
+template<typename T>
+class ClassList {
+public:
+    ~ClassList() {}
+
+    const size_t class_id;
+
+private:
+    std::vector<ClassSeq<T>> buffer;
+
+};
 
 
 template<typename T>
@@ -20,44 +63,7 @@ public:
 
 
 template<typename T>
-class ClassBlock {
-public:
-    ~ClassBlock() {}
-
-    size_t object_size;
-
-private:
-    std::vector<char> buffer;
-
-};
-
-
-template<typename T>
-class ClassRef {
-public:
-    ~ClassRef() {}
-
-    size_t object_size;
-    size_t object_state;
-
-};
-
-
-template<typename T>
-class ClassSeq {
-public:
-    ~ClassSeq() {}
-
-    size_t object_size;
-
-private:
-    std::vector<const T> states;
-
-};
-
-
-template<typename T>
-class Pool {
+class MemoryMap {
 public:
 
 private:

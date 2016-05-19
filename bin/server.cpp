@@ -11,10 +11,8 @@ void queue_thread() {
 }
 
 
-int main() {
-    int port = 2620;
-    std::cout << "listen on port " << port << "\n";
-    unix::TcpAcceptor a(port);
+void accept_connections(int portnum) {
+    unix::TcpAcceptor a(portnum);
     net::Cluster neighbors({});
 
     bool running = true;
@@ -26,4 +24,10 @@ int main() {
         }
         neighbors.update();
     }
+}
+
+
+int main() {
+    accept_connections(2620);
+    return 0;
 }

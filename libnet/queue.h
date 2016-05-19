@@ -22,12 +22,6 @@ public:
 };
 
 
-class Task {
-public:
-    ~Task() {}
-};
-
-
 class Queue {
 public:
     Queue();
