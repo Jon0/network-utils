@@ -4,11 +4,12 @@
 #include <libunix/stream.h>
 
 #include "channel.h"
+#include "process.h"
 
 namespace net {
 
 
-class Machine {
+class Machine : public Node {
 public:
     using key_t = std::string;
 
@@ -18,6 +19,9 @@ public:
     key_t id() const;
     bool connected() const;
     void update(Handler *hdl);
+
+    void run_thread() const override;
+    void poll(Queue &q) const override;
 
 private:
     unix::Socket socket;

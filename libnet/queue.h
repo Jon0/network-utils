@@ -4,7 +4,7 @@
 #include <queue>
 #include <vector>
 
-#include <libutil/memory.h>
+#include <libunix/socket.h>
 
 namespace net {
 
@@ -19,6 +19,10 @@ enum class net_type {
 class Event {
 public:
     ~Event() {}
+
+private:
+    int type;
+
 };
 
 
@@ -28,6 +32,8 @@ public:
     ~Queue();
 
     Queue operator+(const Queue &q) const;
+
+    void socket_open(const unix::Socket &s);
 
 private:
     std::vector<std::shared_ptr<Event>> e;

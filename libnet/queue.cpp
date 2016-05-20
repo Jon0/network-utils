@@ -12,4 +12,9 @@ Queue Queue::operator+(const Queue &q) const {
 }
 
 
+void Queue::socket_open(const unix::Socket &s) {
+
+}
+
+
 }

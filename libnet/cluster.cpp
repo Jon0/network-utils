@@ -52,4 +52,20 @@ Queue Cluster::update() {
 }
 
 
+ClusterAccept::ClusterAccept(unsigned short portnum)
+    :
+    acceptor(portnum) {}
+
+
+void ClusterAccept::run_thread() const {}
+
+
+void ClusterAccept::poll(Queue &q) const {
+    if (acceptor.poll()) {
+        unix::Socket s = acceptor.accept();
+        std::cout << "connected " << s.remote()->str() << "\n";
+    }
+}
+
+
 }

@@ -1,3 +1,4 @@
+#include <functional>
 #include <iostream>
 
 #include <libunix/socket.h>
@@ -5,29 +6,20 @@
 #include <libnet/protocol.h>
 #include <libnet/queue.h>
 
-void queue_thread() {
-    net::Queue q;
 
-}
+void queue_thread(int portnum) {
+    net::Process ps;
+    ps.producers().emplace_back(std::make_unique<net::ClusterAccept>(portnum));
+    ps.run();
 
-
-void accept_connections(int portnum) {
-    unix::TcpAcceptor a(portnum);
+    // event handlers
     net::Cluster neighbors({});
-
-    bool running = true;
-    while (running) {
-        if (a.poll()) {
-            unix::Socket s = a.accept();
-            neighbors = neighbors + net::Machine(s);
-            std::cout << "connected " << s.remote()->str() << "\n";
-        }
-        neighbors.update();
-    }
+    //neighbors = neighbors + net::Machine(s);
+    neighbors.update();
 }
 
 
 int main() {
-    accept_connections(2620);
+    queue_thread(2620);
     return 0;
 }

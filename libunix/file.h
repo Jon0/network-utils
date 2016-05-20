@@ -4,6 +4,8 @@
 
 #include <poll.h>
 
+#include <libutil/channel.h>
+
 namespace unix {
 
 using filedesc_t = int;
@@ -34,7 +36,7 @@ private:
 };
 
 
-class FileDesc {
+class FileDesc : public util::Channel<util::Binary> {
 public:
     FileDesc(const filedesc_t &fd);
     ~FileDesc();
@@ -46,8 +48,8 @@ public:
     bool eof() const;
     bool poll(short events = POLLIN) const;
 
-    std::streamsize read(char *buf, std::size_t count);
-    std::streamsize write(const char *buf, std::size_t count);
+    std::streamsize read(char *buf, std::size_t count) override;
+    std::streamsize write(const char *buf, std::size_t count) override;
 
 private:
     std::streamsize checkerr(const std::streamsize &done);

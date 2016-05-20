@@ -32,21 +32,25 @@ private:
 };
 
 
+class ClusterAccept : public Node {
+public:
+    ClusterAccept(unsigned short portnum);
+
+    void run_thread() const override;
+    void poll(Queue &q) const override;
+
+private:
+    unix::TcpAcceptor acceptor;
+
+};
+
+
 class ClusterJoin : public Event {
 public:
     using modify_t = Cluster;
 
     bool apply(modify_t m) const;
 };
-
-
-class ClusterAccept : public Producer {
-public:
-    void poll(Queue &q) override {}
-
-};
-
-
 
 
 }

@@ -35,4 +35,14 @@ void Machine::update(Handler *hdl) {
 }
 
 
+void Machine::run_thread() const {
+
+}
+
+
+void Machine::poll(Queue &q) const {
+
+}
+
+
 }
