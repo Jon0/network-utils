@@ -2,15 +2,16 @@
 #include <iostream>
 
 #include <libunix/socket.h>
+#include <libprot/interface.h>
 #include <libnet/cluster.h>
 #include <libnet/protocol.h>
 #include <libnet/queue.h>
 
 
 void queue_thread(int portnum) {
-    net::Process ps;
-    ps.producers().emplace_back(std::make_unique<net::ClusterAccept>(portnum));
-    ps.run();
+    net::NewConnection c;
+    prot::Interface intf(c, std::make_shared<unix::TcpAcceptor>(portnum));
+
 
     // event handlers
     net::Cluster neighbors({});

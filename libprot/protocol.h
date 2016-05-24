@@ -1,27 +1,32 @@
 #pragma once
 
 #include <memory>
+#include <string>
+#include <vector>
 
 #include "libutil/channel.h"
 
 namespace prot {
 
 
-class Interface : public util::Channel<util::Binary> {
+class Protocol {
 public:
-    Interface();
-    ~Interface();
+    using channel_t = util::Channel;
 
-    virtual void recv() = 0;
+    ~Protocol() {}
+
+    virtual std::unique_ptr<Protocol> copy() const = 0;
+
+    virtual void chan(channel_t *c) const = 0;
+    virtual void event(channel_t *c) const = 0;
 };
 
 
-class Protocol {
+class Translator {
 public:
-    Protocol();
-    ~Protocol();
 
-    virtual std::unique_ptr<Protocol> copy() const = 0;
+private:
+    std::unique_ptr<Protocol> a, b;
 };
 
 

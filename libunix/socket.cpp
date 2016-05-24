@@ -44,7 +44,16 @@ Socket::Socket(const NetAddress *l, const NetAddress *r, const filedesc_t &fd)
 	:
 	FileDesc(fd),
  	local_addr(l->copy()),
-	remote_addr(r->copy()) {
+	remote_addr(r->copy()),
+ 	active(true) {
+}
+
+
+Socket::~Socket() {}
+
+
+Socket::addr_t Socket::type() const {
+	return attr_id;
 }
 
 
@@ -68,6 +77,19 @@ std::streamsize Socket::send(const char *buf, std::size_t count) {
 }
 
 
+bool Socket::connected() const {
+	return active && !eof();
+}
+
+
+void Socket::shutdown(int how) {
+	if (connected()) {
+		::shutdown(id(), how);
+		active = false;
+	}
+}
+
+
 filedesc_t listen_ipv4(unsigned short portnum) {
 	// open socket
 	int sockfd = ::socket(AF_INET, SOCK_STREAM, 0);
@@ -88,10 +110,25 @@ filedesc_t listen_ipv4(unsigned short portnum) {
 }
 
 
+TcpAcceptor::TcpAcceptor(const TcpAcceptor &a)
+	:
+	FileDesc(a.id()),
+	local_addr(a.local()->copy()) {}
+
+
 TcpAcceptor::TcpAcceptor(int port)
 	:
 	FileDesc(listen_ipv4(port)),
  	local_addr(std::make_unique<IPv4>(std::array<unsigned char, 4>({127, 0, 0, 1}))) {}
+
+
+TcpAcceptor::addr_t TcpAcceptor::type() const {
+	return attr_id;
+}
+
+NetAddress *TcpAcceptor::local() const {
+	return local_addr.get();
+}
 
 
 Socket TcpAcceptor::accept() const {

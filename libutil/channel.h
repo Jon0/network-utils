@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <vector>
 
 namespace util {
 
@@ -10,14 +11,41 @@ struct Binary {
 };
 
 
-template<typename Encoding>
 class Channel {
 public:
-    using encoding_t = typename Encoding::data_t;
-    virtual ~Channel() {}
-    virtual std::streamsize read(encoding_t *buf, std::size_t count) = 0;
-    virtual std::streamsize write(const encoding_t *buf, std::size_t count) = 0;
+    using base_t = char;
+    using addr_t = int;
 
+    virtual ~Channel() {}
+    virtual addr_t type() const = 0;
+    virtual bool ready() const = 0;
+    virtual std::streamsize read(base_t *buf, std::size_t count) = 0;
+    virtual std::streamsize write(const base_t *buf, std::size_t count) = 0;
+
+    template<typename T>
+    T *cast() {
+        return dynamic_cast<T *>(this);
+    }
+};
+
+
+class ChannelAttr {
+    virtual const char *name() const = 0;
+};
+
+
+class ChannelFmt {
+public:
+
+    template<typename E>
+    std::streamsize readt(typename E::data_t *buf, std::size_t count) {
+        // TODO
+    }
+
+    template<typename E>
+    std::streamsize writet(typename E::data_t *buf, std::size_t count) {
+        // TODO
+    }
 };
 
 
@@ -26,7 +54,7 @@ class Buffer {
 public:
 
 private:
-    Channel<Encoding> first, second;
+    Channel first, second;
 
 };
 

@@ -3,32 +3,29 @@
 namespace net {
 
 
-Node::Node() {}
-Node::~Node() {}
-void Node::run() {}
-
-
-Process::Process()
+Node::Node()
     :
     thread_count(1) {}
 
 
-Process::~Process() {}
+Node::~Node() {}
 
 
-Process::set_t &Process::producers() {
-    return pd;
+Node::set_t &Node::nodes() {
+    return subnodes;
 }
 
 
-void Process::run() {
+void Node::run() {
     while (thread_count) {
-
+        for (auto &p : subnodes) {
+            p->update();
+        }
     }
 }
 
 
-void Process::stop() {
+void Node::stop() {
     thread_count = 0;
 }
 

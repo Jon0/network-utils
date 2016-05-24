@@ -1,8 +1,10 @@
 #pragma once
 
+#include <functional>
 #include <initializer_list>
 #include <unordered_map>
 
+#include "libprot/protocol.h"
 #include "libunix/socket.h"
 #include "machine.h"
 #include "process.h"
@@ -32,16 +34,12 @@ private:
 };
 
 
-class ClusterAccept : public Node {
+class NewConnection : public prot::Protocol {
 public:
-    ClusterAccept(unsigned short portnum);
-
-    void run_thread() const override;
-    void poll(Queue &q) const override;
-
-private:
-    unix::TcpAcceptor acceptor;
-
+    NewConnection();
+    std::unique_ptr<prot::Protocol> copy() const override;
+    void chan(channel_t *c) const override;
+    void event(channel_t *c) const override;
 };
 
 

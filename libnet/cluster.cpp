@@ -52,17 +52,23 @@ Queue Cluster::update() {
 }
 
 
-ClusterAccept::ClusterAccept(unsigned short portnum)
-    :
-    acceptor(portnum) {}
+NewConnection::NewConnection() {}
 
 
-void ClusterAccept::run_thread() const {}
+std::unique_ptr<prot::Protocol> NewConnection::copy() const {
+    return std::make_unique<NewConnection>(*this);
+}
 
 
-void ClusterAccept::poll(Queue &q) const {
-    if (acceptor.poll()) {
-        unix::Socket s = acceptor.accept();
+void NewConnection::chan(channel_t *c) const {
+
+}
+
+
+void NewConnection::event(channel_t *c) const {
+    unix::TcpAcceptor *acceptor = dynamic_cast<unix::TcpAcceptor *>(c);
+    if (acceptor->poll()) {
+        unix::Socket s = acceptor->accept();
         std::cout << "connected " << s.remote()->str() << "\n";
     }
 }

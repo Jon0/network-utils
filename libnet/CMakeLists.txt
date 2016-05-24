@@ -21,4 +21,5 @@ target_link_libraries(
 	${CMAKE_THREAD_LIBS_INIT}
 	${CMAKE_DL_LIBS}
 	${UNIX_LIBRARY_NAME}
+	${PROT_LIBRARY_NAME}
 )
