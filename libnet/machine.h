@@ -4,7 +4,6 @@
 #include <libunix/stream.h>
 
 #include "channel.h"
-#include "process.h"
 
 namespace net {
 
@@ -12,8 +11,9 @@ namespace net {
 class Machine {
 public:
     using key_t = std::string;
+    using socket_t = std::shared_ptr<unix::Socket>;
 
-    Machine(const unix::Socket &s);
+    Machine(const socket_t &s);
     virtual ~Machine();
 
     key_t id() const;
@@ -21,7 +21,7 @@ public:
     void update(Handler *hdl);
 
 private:
-    unix::Socket socket;
+    socket_t socket;
     unix::BinaryStream stream;
     std::string input;
 

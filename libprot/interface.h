@@ -12,7 +12,7 @@ public:
     Interface(const Protocol &p, std::shared_ptr<channel_t> c);
     ~Interface();
 
-    void update();
+    void update(Context *ct);
 
 private:
     std::vector<std::shared_ptr<channel_t>> channels;

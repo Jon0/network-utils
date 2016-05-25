@@ -58,6 +58,8 @@ public:
 
 	NetAddress *local() const;
 	Socket accept() const;
+	std::shared_ptr<Socket> accept_shared() const;
+	std::pair<IPv4, filedesc_t> acceptfd() const;
 
 private:
 	std::unique_ptr<NetAddress> local_addr;

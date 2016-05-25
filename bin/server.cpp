@@ -2,6 +2,7 @@
 #include <iostream>
 
 #include <libunix/socket.h>
+#include <libprot/context.h>
 #include <libprot/interface.h>
 #include <libnet/cluster.h>
 #include <libnet/protocol.h>
@@ -9,14 +10,11 @@
 
 
 void queue_thread(int portnum) {
-    net::NewConnection c;
-    prot::Interface intf(c, std::make_shared<unix::TcpAcceptor>(portnum));
-
-
-    // event handlers
-    net::Cluster neighbors({});
-    //neighbors = neighbors + net::Machine(s);
-    neighbors.update();
+    net::Cluster c({});
+    net::ClusterAcceptor a(portnum);
+    while (true) {
+        a.accept(c);
+    }
 }
 
 

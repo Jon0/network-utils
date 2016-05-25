@@ -1,9 +1,16 @@
 #include <algorithm>
 
+#include <libprot/context.h>
+
 #include "cluster.h"
 #include "protocol.h"
 
 namespace net {
+
+
+void Cluster::insert(map_t &map, const unit_t &unit) {
+    map.insert(std::make_pair(unit.id(), unit));
+}
 
 
 Cluster::map_t Cluster::list_to_map(const std::initializer_list<Cluster::unit_t> &m) {
@@ -35,41 +42,34 @@ size_t Cluster::size() const {
 
 Cluster Cluster::operator+(const Cluster::unit_t &m) const {
     map_t result = ipmap;
-    result.insert(std::make_pair(m.id(), m));
+    Cluster::insert(result, m);
     return Cluster(result);
 }
 
 
-Queue Cluster::update() {
-    GroupRespond r(ipmap);
-    for (auto &i : ipmap) {
-        Machine &m = i.second;
-        if (m.connected()) {
-            m.update(&r);
-        }
-    }
-    return Queue();
+void Cluster::add_remote(const unit_t &remote) {
+    Cluster::insert(ipmap, remote);
 }
 
 
-NewConnection::NewConnection() {}
-
-
-std::unique_ptr<prot::Protocol> NewConnection::copy() const {
-    return std::make_unique<NewConnection>(*this);
+void Cluster::add_remote(std::shared_ptr<unix::Socket> remote) {
+    add_remote(Machine(remote));
 }
 
 
-void NewConnection::chan(channel_t *c) const {
+ClusterAcceptor::ClusterAcceptor(unsigned short portnum)
+    :
+    acceptor(portnum) {}
 
-}
+
+ClusterAcceptor::~ClusterAcceptor() {}
 
 
-void NewConnection::event(channel_t *c) const {
-    unix::TcpAcceptor *acceptor = dynamic_cast<unix::TcpAcceptor *>(c);
-    if (acceptor->poll()) {
-        unix::Socket s = acceptor->accept();
-        std::cout << "connected " << s.remote()->str() << "\n";
+void ClusterAcceptor::accept(Cluster &c) {
+    if (acceptor.poll()) {
+        auto sock = acceptor.accept_shared();
+        std::cout << "connected " << sock->remote()->str() << "\n";
+        c.add_remote(sock);
     }
 }
 

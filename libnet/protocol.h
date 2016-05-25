@@ -2,9 +2,6 @@
 
 #include <iostream>
 
-#include <libunix/stream.h>
-
-#include "channel.h"
 #include "cluster.h"
 
 namespace net {

@@ -132,6 +132,18 @@ NetAddress *TcpAcceptor::local() const {
 
 
 Socket TcpAcceptor::accept() const {
+	auto pair = acceptfd();
+	return Socket(local_addr.get(), &pair.first, pair.second);
+}
+
+
+std::shared_ptr<Socket> TcpAcceptor::accept_shared() const {
+	auto pair = acceptfd();
+	return std::make_shared<Socket>(local_addr.get(), &pair.first, pair.second);
+}
+
+
+std::pair<IPv4, filedesc_t> TcpAcceptor::acceptfd() const {
 	sockaddr_in cli_addr;
 	socklen_t clilen = sizeof(cli_addr);
 	int newsockfd = ::accept(id(), (struct sockaddr *) &cli_addr, &clilen);
@@ -139,7 +151,7 @@ Socket TcpAcceptor::accept() const {
 		c_error("ERROR on accept");
 	}
 	IPv4 remote_addr((const unsigned char *) &cli_addr.sin_addr);
-	return Socket(local_addr.get(), &remote_addr, newsockfd);
+	return std::make_pair(remote_addr, newsockfd);
 }
 
 

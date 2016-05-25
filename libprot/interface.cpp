@@ -13,10 +13,10 @@ Interface::Interface(const Protocol &p, std::shared_ptr<channel_t> c)
 Interface::~Interface() {}
 
 
-void Interface::update() {
-    for (auto &c : channels) {
-        if (c->ready()) {
-            pr->event(c.get());
+void Interface::update(Context *ct) {
+    for (auto &ch : channels) {
+        if (ch->ready()) {
+            pr->event(ct, ch.get());
         }
     }
 }

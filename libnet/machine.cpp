@@ -5,17 +5,17 @@
 namespace net {
 
 
-Machine::Machine(const unix::Socket &s)
+Machine::Machine(const Machine::socket_t &s)
     :
     socket(s),
-    stream(&socket) {}
+    stream(socket.get()) {}
 
 
 Machine::~Machine() {}
 
 
 Machine::key_t Machine::id() const {
-    return socket.remote()->str();
+    return socket->remote()->str();
 }
 
 
