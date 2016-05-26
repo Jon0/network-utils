@@ -12,8 +12,7 @@ void test_connect(const std::string &addr) {
     auto sock = unix::ipv4_socket();
     ip.connect(sock, 2620);
     unix::FileDesc fd(sock);
-    net::GroupRequest r(&fd);
-    r.request_neighbors();
+
 }
 
 

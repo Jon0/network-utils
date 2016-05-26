@@ -2,35 +2,28 @@
 
 #include <iostream>
 
+#include <libutil/serial.h>
+
 #include "cluster.h"
 
 namespace net {
 
 
-class GroupRequest : public Handler {
+class Message : public util::Serialisable {
 public:
-    GroupRequest(unix::FileDesc *desc);
-    virtual ~GroupRequest();
+    Message(unix::FileDesc *desc);
+    virtual ~Message();
 
     void request_neighbors();
 
-    std::string recv_msg(const std::string &msg) override;
+    std::string recv_msg(const std::string &msg);
+
+    bool valid() const override;
+    void read(util::Channel &c) override;
+    void write(util::Channel &c) override;
 
 private:
     unix::BinaryStream stream;
-
-};
-
-
-class GroupRespond : public Handler {
-public:
-    GroupRespond(const Cluster &c);
-    virtual ~GroupRespond();
-
-    std::string recv_msg(const std::string &msg) override;
-
-private:
-    const Cluster cluster;
 
 };
 

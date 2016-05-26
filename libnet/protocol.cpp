@@ -3,15 +3,15 @@
 namespace net {
 
 
-GroupRequest::GroupRequest(unix::FileDesc *desc)
+Message::Message(unix::FileDesc *desc)
     :
     stream(desc) {}
 
 
-GroupRequest::~GroupRequest() {}
+Message::~Message() {}
 
 
-void GroupRequest::request_neighbors() {
+void Message::request_neighbors() {
     stream.write_all("reqn\n");
 
     std::string response;
@@ -21,28 +21,14 @@ void GroupRequest::request_neighbors() {
 }
 
 
-std::string GroupRequest::recv_msg(const std::string &msg) {
+std::string Message::recv_msg(const std::string &msg) {
     return "";
 }
 
 
-GroupRespond::GroupRespond(const Cluster &c)
-    :
-    cluster(c) {}
-
-
-GroupRespond::~GroupRespond() {}
-
-
-std::string GroupRespond::recv_msg(const std::string &msg) {
-    if (!msg.empty()) {
-        std::cout << "input: " << msg << "\n";
-    }
-    return "response\n";
-}
-
-
-
+bool Message::valid() const {}
+void Message::read(util::Channel &c) {}
+void Message::write(util::Channel &c) {}
 
 
 }
