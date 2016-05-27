@@ -8,6 +8,14 @@
 namespace net {
 
 
+class MachineAttr {
+public:
+
+private:
+    int users, permissions, devices;
+};
+
+
 class Machine {
 public:
     using key_t = std::string;
@@ -21,6 +29,7 @@ public:
     void update(Handler *hdl);
 
 private:
+    MachineAttr attributes;
     socket_t socket;
     unix::BinaryStream stream;
     std::string input;

@@ -1,11 +1,12 @@
 #pragma once
 
+#include "context.h"
 #include "protocol.h"
 
 namespace prot {
 
 
-class Interface {
+class Interface : public ContextItem {
 public:
     using channel_t = util::Channel;
 

@@ -5,15 +5,15 @@
 #include <libprot/context.h>
 #include <libprot/interface.h>
 #include <libnet/cluster.h>
-#include <libnet/protocol.h>
+#include <libnet/process.h>
 #include <libnet/queue.h>
 
 
 void queue_thread(int portnum) {
     net::Cluster c({});
-    net::ClusterAcceptor a(portnum);
+    net::ClusterAcceptor a(c, portnum);
     while (true) {
-        a.accept(c);
+        a.accept();
     }
 }
 

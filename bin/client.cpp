@@ -2,7 +2,7 @@
 
 #include <libutil/strings.h>
 #include <libunix/address.h>
-#include <libnet/protocol.h>
+#include <libnet/process.h>
 
 
 void test_connect(const std::string &addr) {

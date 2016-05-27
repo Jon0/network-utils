@@ -29,24 +29,13 @@ public:
     void add_remote(const unit_t &remote);
     void add_remote(std::shared_ptr<unix::Socket> remote);
 
-
-
 private:
     map_t ipmap;
 
 
 };
 
-class ClusterAcceptor {
-public:
-    ClusterAcceptor(unsigned short portnum);
-    virtual ~ClusterAcceptor();
-    void accept(Cluster &c);
 
-private:
-    unix::TcpAcceptor acceptor;
-
-};
 
 
 }

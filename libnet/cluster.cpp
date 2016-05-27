@@ -1,9 +1,6 @@
 #include <algorithm>
 
-#include <libprot/context.h>
-
 #include "cluster.h"
-#include "protocol.h"
 
 namespace net {
 
@@ -54,23 +51,6 @@ void Cluster::add_remote(const unit_t &remote) {
 
 void Cluster::add_remote(std::shared_ptr<unix::Socket> remote) {
     add_remote(Machine(remote));
-}
-
-
-ClusterAcceptor::ClusterAcceptor(unsigned short portnum)
-    :
-    acceptor(portnum) {}
-
-
-ClusterAcceptor::~ClusterAcceptor() {}
-
-
-void ClusterAcceptor::accept(Cluster &c) {
-    if (acceptor.poll()) {
-        auto sock = acceptor.accept_shared();
-        std::cout << "connected " << sock->remote()->str() << "\n";
-        c.add_remote(sock);
-    }
 }
 
 
