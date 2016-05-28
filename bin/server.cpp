@@ -10,11 +10,10 @@
 
 
 void queue_thread(int portnum) {
+    prot::Context process;
     net::Cluster c({});
-    net::ClusterAcceptor a(c, portnum);
-    while (true) {
-        a.accept();
-    }
+    process.add(std::make_shared<net::ClusterAcceptor>(c, portnum));
+    process.run();
 }
 
 
