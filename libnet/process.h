@@ -22,5 +22,16 @@ private:
 };
 
 
+class ClusterResponder : public prot::ContextItem {
+public:
+    ClusterResponder(Cluster &c);
+    virtual ~ClusterResponder();
+
+    void update(prot::Context *c) override;
+
+private:
+    Cluster *cl;
+
+};
 
 }

@@ -13,6 +13,7 @@ void queue_thread(int portnum) {
     prot::Context process;
     net::Cluster c({});
     process.add(std::make_shared<net::ClusterAcceptor>(c, portnum));
+    process.add(std::make_shared<net::ClusterResponder>(c));
     process.run();
 }
 

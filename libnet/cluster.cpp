@@ -44,6 +44,13 @@ Cluster Cluster::operator+(const Cluster::unit_t &m) const {
 }
 
 
+void Cluster::apply(const Cluster::apply_t &a) {
+    for (auto &m : ipmap) {
+        a(m.second);
+    }
+}
+
+
 void Cluster::add_remote(const unit_t &remote) {
     Cluster::insert(ipmap, remote);
 }

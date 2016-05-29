@@ -3,32 +3,28 @@
 namespace net {
 
 
-Message::Message(unix::FileDesc *desc)
-    :
-    stream(desc) {}
-
-
+Message::Message() {}
 Message::~Message() {}
 
 
-void Message::request_neighbors() {
-    stream.write_all("reqn\n");
-
-    std::string response;
-    stream.read_all(response);
-
-    std::cout << "response: " << response << "\n";
+bool Message::valid() const {
+    return true;
 }
 
 
-std::string Message::recv_msg(const std::string &msg) {
-    return "";
+void Message::read(util::Channel &c) {
+    char buf [1024];
+    while (c.ready()) {
+        auto done = c.read(buf, 1024);
+        msg += std::string(buf, done);
+    }
 }
 
 
-bool Message::valid() const {}
-void Message::read(util::Channel &c) {}
-void Message::write(util::Channel &c) {}
+void Message::write(util::Channel &c) {
+    c.write(msg.c_str(), msg.size());
+    msg = "";
+}
 
 
 }

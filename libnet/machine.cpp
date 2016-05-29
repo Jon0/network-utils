@@ -1,3 +1,5 @@
+#include <iostream>
+
 #include <libunix/socket.h>
 
 #include "machine.h"
@@ -21,6 +23,16 @@ Machine::key_t Machine::id() const {
 
 bool Machine::connected() const {
     return stream.good();
+}
+
+
+void Machine::log(const std::string &msg) const {
+    std::cout << "[" << id() << "] " << msg << "\n";
+}
+
+
+Machine::socket_t Machine::connection() {
+    return socket;
 }
 
 
