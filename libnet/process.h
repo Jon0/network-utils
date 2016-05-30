@@ -27,6 +27,8 @@ public:
     ClusterResponder(Cluster &c);
     virtual ~ClusterResponder();
 
+    std::string respond(const std::string &s) const;
+
     void update(prot::Context *c) override;
 
 private:

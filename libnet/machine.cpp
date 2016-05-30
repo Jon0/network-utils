@@ -36,14 +36,10 @@ Machine::socket_t Machine::connection() {
 }
 
 
-void Machine::update(Handler *hdl) {
-    std::string temp;
-    stream.read_all(temp);
-    if (!temp.empty()) {
-        input += temp;
-        std::string s = hdl->recv_msg(input);
-        stream.write_all(s);
-    }
+std::string Machine::pop() {
+    std::string buf;
+    stream.read_all(buf);
+    return buf;
 }
 
 

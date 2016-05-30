@@ -28,7 +28,7 @@ public:
     bool connected() const;
     void log(const std::string &msg) const;
     socket_t connection();
-    void update(Handler *hdl);
+    std::string pop();
 
 private:
     MachineAttr attributes;

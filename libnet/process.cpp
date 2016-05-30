@@ -29,14 +29,22 @@ void ClusterAcceptor::update(prot::Context *c) {
 }
 
 
-ClusterResponder::ClusterResponder(Cluster &c) {}
+ClusterResponder::ClusterResponder(Cluster &c)
+    :
+    cl(&c) {}
+
+
 ClusterResponder::~ClusterResponder() {}
 
 
+std::string ClusterResponder::respond(const std::string &s) const {
+    return s;
+}
+
+
 void ClusterResponder::update(prot::Context *c) {
-    auto fn = [](Cluster::unit_t &u) {
-        Message m;
-        m.read(*u.connection());
+    auto fn = [this](Cluster::unit_t &u) {
+        std::string reply = respond(u.pop());
     };
     cl->apply(fn);
 }
