@@ -1,6 +1,5 @@
 #include <iostream>
 
-#include "message.h"
 #include "process.h"
 
 namespace net {
@@ -37,6 +36,16 @@ ClusterResponder::ClusterResponder(Cluster &c)
 ClusterResponder::~ClusterResponder() {}
 
 
+std::string ClusterResponder::neighbors() const {
+    std::string result;
+    std::vector<unix::NetAddress *> n = cl->neighbors();
+    for (auto a : n) {
+        result += a->str() + ":";
+    }
+    return result;
+}
+
+
 std::string ClusterResponder::respond(const std::string &s) const {
     return s;
 }
@@ -45,6 +54,7 @@ std::string ClusterResponder::respond(const std::string &s) const {
 void ClusterResponder::update(prot::Context *c) {
     auto fn = [this](Cluster::unit_t &u) {
         std::string reply = respond(u.pop());
+        u.send(neighbors());
     };
     cl->apply(fn);
 }

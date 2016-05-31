@@ -4,11 +4,31 @@
 #include <initializer_list>
 #include <unordered_map>
 
+#include <libutil/serial.h>
+
 #include "libprot/protocol.h"
 #include "libunix/socket.h"
 #include "machine.h"
 
 namespace net {
+
+
+class Neighbors : public util::Serialisable {
+public:
+    using addr_t = std::unique_ptr<unix::NetAddress>;
+    using list_t = std::vector<addr_t>;
+
+    Neighbors();
+    virtual ~Neighbors();
+
+    bool valid() const override;
+    bool read(util::BinaryStream &s) override;
+    bool write(util::BinaryStream &s) override;
+
+private:
+    list_t addrs;
+
+};
 
 
 class Cluster {
@@ -25,6 +45,7 @@ public:
     virtual ~Cluster();
 
     size_t size() const;
+    std::vector<unix::NetAddress *> neighbors() const;
     Cluster operator+(const unit_t &m) const;
 
     void apply(const apply_t &a);

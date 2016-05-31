@@ -21,6 +21,11 @@ Machine::key_t Machine::id() const {
 }
 
 
+unix::NetAddress *Machine::addr() const {
+    return socket->remote();
+}
+
+
 bool Machine::connected() const {
     return stream.good();
 }
@@ -31,16 +36,15 @@ void Machine::log(const std::string &msg) const {
 }
 
 
-Machine::socket_t Machine::connection() {
-    return socket;
-}
-
-
 std::string Machine::pop() {
     std::string buf;
     stream.read_all(buf);
     return buf;
 }
 
+
+void Machine::send(const std::string &msg) {
+    stream.write_all(msg);
+}
 
 }

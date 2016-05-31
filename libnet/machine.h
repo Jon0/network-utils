@@ -1,7 +1,7 @@
 #pragma once
 
 #include <libunix/socket.h>
-#include <libunix/stream.h>
+#include <libutil/stream.h>
 
 #include "channel.h"
 
@@ -16,6 +16,19 @@ private:
 };
 
 
+/**
+ * Additional sockets per task
+ */
+class MachineTask {
+public:
+    using socket_t = std::shared_ptr<unix::Socket>;
+
+private:
+    socket_t socket;
+    util::BinaryStream stream;
+
+};
+
 class Machine {
 public:
     using key_t = std::string;
@@ -25,15 +38,17 @@ public:
     virtual ~Machine();
 
     key_t id() const;
+    unix::NetAddress *addr() const;
     bool connected() const;
     void log(const std::string &msg) const;
-    socket_t connection();
+
     std::string pop();
+    void send(const std::string &msg);
 
 private:
     MachineAttr attributes;
     socket_t socket;
-    unix::BinaryStream stream;
+    util::BinaryStream stream;
     std::string input;
 
 };

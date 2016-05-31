@@ -1,8 +1,38 @@
 #include <algorithm>
+#include <iostream>
 
 #include "cluster.h"
 
 namespace net {
+
+
+Neighbors::Neighbors() {}
+Neighbors::~Neighbors() {}
+
+
+bool Neighbors::valid() const {
+    return true;
+}
+
+
+bool Neighbors::read(util::BinaryStream &s) {
+    if (s.available() < 4) {
+        return false;
+    }
+    int32_t length = s.peek_type<int32_t>();
+    if (s.available() < length) {
+        return false;
+    }
+    std::string buf = s.read_some(length);
+    std::cout << "recv: " << buf << "\n";
+    return true;
+}
+
+
+bool Neighbors::write(util::BinaryStream &s) {
+    s.write_all("output\n");
+    return true;
+}
 
 
 void Cluster::insert(map_t &map, const unit_t &unit) {
@@ -34,6 +64,14 @@ Cluster::~Cluster() {}
 
 size_t Cluster::size() const {
     return ipmap.size();
+}
+
+
+std::vector<unix::NetAddress *> Cluster::neighbors() const {
+    std::vector<unix::NetAddress *> result;
+    for (auto &u : ipmap) {
+        result.emplace_back(u.second.addr());
+    }
 }
 
 

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "channel.h"
+#include "stream.h"
 
 namespace util {
 
@@ -8,8 +8,8 @@ namespace util {
 class Serialisable {
 public:
     virtual bool valid() const = 0;
-    virtual void read(Channel &c) = 0;
-    virtual void write(Channel &c) = 0;
+    virtual bool read(BinaryStream &s) = 0;
+    virtual bool write(BinaryStream &s) = 0;
 };
 
 

@@ -18,6 +18,16 @@ enum class AddressType {
 };
 
 
+constexpr int addrtov(const AddressType &a) {
+	switch (a) {
+	case AddressType::ipv4:
+		return 4;
+	case AddressType::ipv6:
+		return 6;
+	}
+}
+
+
 class NetAddress {
 public:
 	virtual ~NetAddress() {}

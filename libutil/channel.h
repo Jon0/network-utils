@@ -14,10 +14,17 @@ struct Binary {
 class Channel {
 public:
     using base_t = char;
-    using addr_t = int;
 
     virtual ~Channel() {}
-    virtual addr_t type() const = 0;
+
+    /**
+     * Eof has not been reached and channel is writable
+     */
+    virtual bool open() const = 0;
+
+    /**
+     * Able to read some input
+     */
     virtual bool ready() const = 0;
     virtual std::streamsize read(base_t *buf, std::size_t count) = 0;
     virtual std::streamsize write(const base_t *buf, std::size_t count) = 0;

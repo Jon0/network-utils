@@ -52,11 +52,6 @@ Socket::Socket(const NetAddress *l, const NetAddress *r, const filedesc_t &fd)
 Socket::~Socket() {}
 
 
-Socket::addr_t Socket::type() const {
-	return attr_id;
-}
-
-
 NetAddress *Socket::local() const {
 	return local_addr.get();
 }
@@ -87,6 +82,11 @@ void Socket::shutdown(int how) {
 		::shutdown(id(), how);
 		active = false;
 	}
+}
+
+
+bool Socket::open() const {
+	return connected();
 }
 
 
@@ -121,10 +121,6 @@ TcpAcceptor::TcpAcceptor(int port)
 	FileDesc(listen_ipv4(port)),
  	local_addr(std::make_unique<IPv4>(std::array<unsigned char, 4>({127, 0, 0, 1}))) {}
 
-
-TcpAcceptor::addr_t TcpAcceptor::type() const {
-	return attr_id;
-}
 
 NetAddress *TcpAcceptor::local() const {
 	return local_addr.get();

@@ -1,12 +1,8 @@
 #pragma once
 
-#include <iostream>
-
 #include <libutil/serial.h>
 
-#include "cluster.h"
-
-namespace net {
+namespace prot {
 
 
 class Message : public util::Serialisable {
@@ -15,8 +11,8 @@ public:
     virtual ~Message();
 
     bool valid() const override;
-    void read(util::Channel &c) override;
-    void write(util::Channel &c) override;
+    bool read(util::BinaryStream &s) override;
+    bool write(util::BinaryStream &s) override;
 
 private:
     std::string msg;

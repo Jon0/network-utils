@@ -68,11 +68,6 @@ FileDesc::~FileDesc() {
 }
 
 
-int FileDesc::type() const {
-	return attr_id;
-}
-
-
 bool FileDesc::operator==(const FileDesc &f) const {
 	return fd == f.fd;
 }
@@ -95,6 +90,11 @@ bool FileDesc::poll(short events) const {
 		c_error("ERROR on poll");
 	}
 	return result;
+}
+
+
+bool FileDesc::open() const {
+	return !eof();
 }
 
 
