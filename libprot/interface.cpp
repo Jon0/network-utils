@@ -15,7 +15,7 @@ Interface::~Interface() {}
 
 void Interface::update(Context *ct) {
     for (auto &ch : channels) {
-        if (ch->ready()) {
+        if (ch->readable()) {
             pr->event(ct, ch.get());
         }
     }

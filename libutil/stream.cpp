@@ -45,9 +45,13 @@ void BinaryStream::read_all(std::string &buf) {
 
 
 void BinaryStream::write_all(const std::string &buf) {
+    while (!c->writable()) {}
     auto done = c->write(buf.c_str(), buf.size());
     if (done < buf.size()) {
         std::cout << "incomplete write\n";
+    }
+    else {
+        std::cout << "sent: " << buf << "\n";
     }
 }
 
@@ -66,7 +70,7 @@ void BinaryStream::ensure_available(size_t len) const {
 
 
 void BinaryStream::sync_input() {
-    while (c->ready()) {
+    while (c->readable()) {
         std::streamsize done = c->read(in_buffer, buffersize);
         if (done > 0) {
             strbuffer += std::string(in_buffer, done);

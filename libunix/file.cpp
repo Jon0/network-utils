@@ -98,8 +98,13 @@ bool FileDesc::open() const {
 }
 
 
-bool FileDesc::ready() const {
-	return poll();
+bool FileDesc::readable() const {
+	return poll(POLLIN);
+}
+
+
+bool FileDesc::writable() const {
+	return poll(POLLOUT);
 }
 
 

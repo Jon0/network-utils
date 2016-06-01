@@ -18,14 +18,15 @@ public:
     virtual ~Channel() {}
 
     /**
-     * Eof has not been reached and channel is writable
+     * Eof has not been reached
      */
     virtual bool open() const = 0;
 
     /**
      * Able to read some input
      */
-    virtual bool ready() const = 0;
+    virtual bool readable() const = 0;
+    virtual bool writable() const = 0;
     virtual std::streamsize read(base_t *buf, std::size_t count) = 0;
     virtual std::streamsize write(const base_t *buf, std::size_t count) = 0;
 };

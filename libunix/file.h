@@ -48,7 +48,8 @@ public:
     bool poll(short events = POLLIN) const;
 
     virtual bool open() const override;
-    bool ready() const override;
+    bool readable() const override;
+    bool writable() const override;
     std::streamsize read(char *buf, std::size_t count) override;
     std::streamsize write(const char *buf, std::size_t count) override;
 
