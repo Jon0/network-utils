@@ -36,7 +36,6 @@ bool Message::read(util::BinaryStream &s) {
     }
     s.read_some(sizeof(int32_t));
     msg = s.read_some(length);
-    std::cout << "recv: " << msg << "\n";
     return true;
 }
 

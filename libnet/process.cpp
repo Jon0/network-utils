@@ -58,7 +58,10 @@ void ClusterResponder::update(prot::Context *c) {
             std::cout << "recv: " << m.str() << "\n";
         }
         if (!recv.empty()) {
-            u.send(neighbors());
+            std::cout << "send response\n";
+            std::string rp = neighbors();
+            std::cout << rp << "\n";
+            u.send(rp);
         }
     };
     cl->apply(fn);
