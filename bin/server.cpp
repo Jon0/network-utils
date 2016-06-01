@@ -9,6 +9,20 @@
 #include <libnet/queue.h>
 
 
+void join_thread(const std::string &host, int portnum) {
+    unix::IPv4 ip = unix::parse_ipv4(host);
+    net::Machine m(&ip, portnum);
+    prot::Message msg("reqn");
+    m.send(msg);
+
+    prot::Context process;
+    net::Cluster c({});
+    process.add(std::make_shared<net::ClusterAcceptor>(c, portnum));
+    process.add(std::make_shared<net::ClusterResponder>(c));
+    process.run();
+}
+
+
 void queue_thread(int portnum) {
     prot::Context process;
     net::Cluster c({});
@@ -18,7 +32,14 @@ void queue_thread(int portnum) {
 }
 
 
-int main() {
-    queue_thread(2620);
+int main(int argc, char *argv[]) {
+    if (argc > 1) {
+        std::string host = argv[1];
+        std::cout << "connecting " << host << "\n";
+        join_thread(host, 2620);
+    }
+    else {
+        queue_thread(2620);
+    }
     return 0;
 }

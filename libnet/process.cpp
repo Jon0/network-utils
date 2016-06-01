@@ -37,10 +37,10 @@ ClusterResponder::~ClusterResponder() {}
 
 
 std::string ClusterResponder::neighbors() const {
-    std::string result;
     std::vector<unix::NetAddress *> n = cl->neighbors();
+    std::string result = std::to_string(n.size());
     for (auto a : n) {
-        result += a->str() + ":";
+        result += ":" + a->str();
     }
     return result;
 }
@@ -53,8 +53,13 @@ std::string ClusterResponder::respond(const std::string &s) const {
 
 void ClusterResponder::update(prot::Context *c) {
     auto fn = [this](Cluster::unit_t &u) {
-        std::string reply = respond(u.pop());
-        u.send(neighbors());
+        auto recv = u.poll();
+        for (auto &m : recv) {
+            std::cout << "recv: " << m.str() << "\n";
+        }
+        if (!recv.empty()) {
+            u.send(neighbors());
+        }
     };
     cl->apply(fn);
 }

@@ -1,5 +1,6 @@
 #pragma once
 
+#include <libprot/message.h>
 #include <libunix/socket.h>
 #include <libutil/stream.h>
 
@@ -29,11 +30,14 @@ private:
 
 };
 
+
 class Machine {
 public:
     using key_t = std::string;
     using socket_t = std::shared_ptr<unix::Socket>;
+    using messages_t = std::vector<prot::Message>;
 
+    Machine(unix::NetAddress *addr, unsigned short portnum);
     Machine(const socket_t &s);
     virtual ~Machine();
 
@@ -43,6 +47,8 @@ public:
     void log(const std::string &msg) const;
 
     std::string pop();
+    messages_t poll();
+    void send(prot::Message &msg);
     void send(const std::string &msg);
 
 private:

@@ -15,6 +15,14 @@ T strcast(const std::string &str) {
 }
 
 
+template<typename T>
+std::string struncast(const T &t) {
+    char result [sizeof(T)];
+    std::memcpy(result, &t, sizeof(T));
+    return std::string(result, sizeof(T));
+}
+
+
 class BinaryStream {
 public:
     static constexpr size_t buffersize = 1024;
@@ -45,6 +53,11 @@ public:
     template<typename T>
     T read_type() {
         return strcast<T>(read_some(sizeof(T)));
+    }
+
+    template<typename T>
+    void write_type(const T &t) {
+        return write_all(struncast<T>(t));
     }
 
 private:

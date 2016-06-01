@@ -32,11 +32,32 @@ filedesc_t ipv6_socket(int socket_type, int protocol) {
 }
 
 
+filedesc_t addr_socket(const NetAddress *r, int socket_type, int protocol) {
+	switch (r->type()) {
+	case AddressType::ipv4:
+		return ipv4_socket(socket_type, protocol);
+	case AddressType::ipv6:
+		return ipv6_socket(socket_type, protocol);
+	}
+}
+
+
+
 Socket::Socket(const Socket &s)
  	:
 	FileDesc(s.id()),
  	local_addr(s.local_addr->copy()),
 	remote_addr(s.remote_addr->copy()) {
+}
+
+
+Socket::Socket(const NetAddress *r, unsigned short portnum)
+	:
+	FileDesc(addr_socket(r)),
+ 	local_addr(std::make_unique<IPv4>(std::array<unsigned char, 4>({127, 0, 0, 1}))),
+	remote_addr(r->copy()),
+ 	active(true) {
+	r->connect(id(), portnum);
 }
 
 

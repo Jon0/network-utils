@@ -7,6 +7,12 @@
 namespace net {
 
 
+Machine::Machine(unix::NetAddress *addr, unsigned short portnum)
+    :
+    socket(std::make_shared<unix::Socket>(addr, portnum)),
+    stream(socket.get()) {}
+
+
 Machine::Machine(const Machine::socket_t &s)
     :
     socket(s),
@@ -40,6 +46,25 @@ std::string Machine::pop() {
     std::string buf;
     stream.read_all(buf);
     return buf;
+}
+
+
+Machine::messages_t Machine::poll() {
+    messages_t result;
+    bool parse = true;
+    while (parse) {
+        prot::Message msg;
+        parse = msg.read(stream);
+        if (parse) {
+            result.emplace_back(msg);
+        }
+    }
+    return result;
+}
+
+
+void Machine::send(prot::Message &msg) {
+    msg.write(stream);
 }
 
 

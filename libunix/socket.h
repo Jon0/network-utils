@@ -13,11 +13,13 @@ using millisecs = std::chrono::milliseconds;
 
 filedesc_t ipv4_socket(int socket_type = SOCK_STREAM, int protocol = 0);
 filedesc_t ipv6_socket(int socket_type = SOCK_STREAM, int protocol = 0);
+filedesc_t addr_socket(const NetAddress *r, int socket_type = SOCK_STREAM, int protocol = 0);
 
 
 class Socket : public FileDesc {
 public:
 	Socket(const Socket &s);
+	Socket(const NetAddress *r, unsigned short portnum);
 	Socket(const NetAddress *l, const NetAddress *r, const filedesc_t &fd);
 	virtual ~Socket();
 
