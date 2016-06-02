@@ -40,7 +40,7 @@ std::string ClusterResponder::neighbors() const {
     std::vector<unix::NetAddress *> n = cl->neighbors();
     std::string result = std::to_string(n.size());
     for (auto a : n) {
-        result += ":" + a->str();
+        result += ";" + a->str();
     }
     return result;
 }

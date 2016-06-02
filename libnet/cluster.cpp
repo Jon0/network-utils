@@ -72,6 +72,7 @@ std::vector<unix::NetAddress *> Cluster::neighbors() const {
     for (auto &u : ipmap) {
         result.emplace_back(u.second.addr());
     }
+    return result;
 }
 
 
