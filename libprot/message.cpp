@@ -27,11 +27,12 @@ bool Message::valid() const {
 
 
 bool Message::read(util::BinaryStream &s) {
-    if (s.available() < 4) {
+    if (s.available() < sizeof(int32_t)) {
         return false;
     }
     int32_t length = s.peek_type<int32_t>();
-    if (s.available() < length) {
+    std::cout << "Length is " << length << "\n";
+    if (s.available() < length + sizeof(int32_t)) {
         return false;
     }
     s.read_some(sizeof(int32_t));

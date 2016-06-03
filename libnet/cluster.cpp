@@ -16,7 +16,7 @@ bool Neighbors::valid() const {
 
 
 bool Neighbors::read(util::BinaryStream &s) {
-    if (s.available() < 4) {
+    if (s.available() < sizeof(int32_t)) {
         return false;
     }
     int32_t length = s.peek_type<int32_t>();
