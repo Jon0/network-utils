@@ -20,6 +20,7 @@ bool Neighbors::read(util::BinaryStream &s) {
         return false;
     }
     int32_t length = s.peek_type<int32_t>();
+    std::cout << "Length is " << length << "\n";
     if (s.available() < length) {
         return false;
     }
