@@ -1,6 +1,7 @@
 #pragma once
 
 #include <libprot/message.h>
+#include <libprot/queue.h>
 #include <libunix/socket.h>
 #include <libutil/stream.h>
 
@@ -23,38 +24,50 @@ private:
 class MachineTask {
 public:
     using socket_t = std::shared_ptr<unix::Socket>;
+    using queue_t = std::shared_ptr<prot::Queue>;
+    using messages_t = std::vector<prot::Message>;
+
+    MachineTask(unix::NetAddress *addr, unsigned short portnum);
+    MachineTask(const socket_t &s);
+
+    bool connected() const;
+    void log(const std::string &msg) const;
+
+    socket_t connection() const;
+    queue_t handler() const;
+
+    void enable(prot::Context *ct);
 
 private:
     socket_t socket;
-    util::BinaryStream stream;
+    queue_t queue;
 
 };
 
 
 class Machine {
 public:
+    using context_t = prot::Context;
     using key_t = std::string;
-    using socket_t = std::shared_ptr<unix::Socket>;
-    using messages_t = std::vector<prot::Message>;
+    using task_t = MachineTask;
+    using queue_t = typename task_t::queue_t;
+    using tasklist_t = std::vector<task_t>;
+    using serial_t = std::shared_ptr<util::Serialisable>;
 
-    Machine(unix::NetAddress *addr, unsigned short portnum);
-    Machine(const socket_t &s);
+    Machine(context_t *ctxt, task_t ctrl);
     virtual ~Machine();
 
     key_t id() const;
     unix::NetAddress *addr() const;
-    bool connected() const;
-    void log(const std::string &msg) const;
+    queue_t ctrlqueue() const;
 
-    std::string pop();
-    messages_t poll();
-    void send(prot::Message &msg);
-    void send(const std::string &msg);
+    void start(const MachineTask &m);
 
 private:
+    context_t *context;
     MachineAttr attributes;
-    socket_t socket;
-    util::BinaryStream stream;
+    task_t control;
+    tasklist_t tasks;
     std::string input;
 
 };

@@ -14,17 +14,12 @@ ClusterAcceptor::ClusterAcceptor(Cluster &c, unsigned short portnum)
 ClusterAcceptor::~ClusterAcceptor() {}
 
 
-void ClusterAcceptor::accept() {
+void ClusterAcceptor::update(prot::Context *c) {
     if (acceptor.poll()) {
         auto sock = acceptor.accept_shared();
-        std::cout << "[" << sock->remote()->str() << "] connected\n";
-        cl->add_remote(sock);
+        std::cout << "[" << sock->rstr() << "] connected\n";
+        cl->add_remote(Machine(c, MachineTask(sock)));
     }
-}
-
-
-void ClusterAcceptor::update(prot::Context *c) {
-    accept();
 }
 
 
@@ -36,16 +31,6 @@ ClusterResponder::ClusterResponder(Cluster &c)
 ClusterResponder::~ClusterResponder() {}
 
 
-std::string ClusterResponder::neighbors() const {
-    std::vector<unix::NetAddress *> n = cl->neighbors();
-    std::string result = std::to_string(n.size());
-    for (auto a : n) {
-        result += ";" + a->str();
-    }
-    return result;
-}
-
-
 std::string ClusterResponder::respond(const std::string &s) const {
     return s;
 }
@@ -53,16 +38,15 @@ std::string ClusterResponder::respond(const std::string &s) const {
 
 void ClusterResponder::update(prot::Context *c) {
     auto fn = [this](Cluster::unit_t &u) {
-        auto recv = u.poll();
-        for (auto &m : recv) {
-            std::cout << "recv: " << m.str() << "\n";
-        }
-        if (!recv.empty()) {
-            std::cout << "send response\n";
-            std::string rp = neighbors();
-            std::cout << rp << "\n";
-            u.send(rp);
-        }
+        auto recv = std::make_shared<prot::Message>();
+        u.ctrlqueue()->pushr(recv, [this, &u, recv]() {
+            std::cout << "recv: " << recv->str() << "\n";
+            auto reply = std::make_shared<prot::Message>(cl->neighborstr());
+            u.ctrlqueue()->pushw(reply, []() {
+                return true;
+            });
+            return true;
+        });
     };
     cl->apply(fn);
 }

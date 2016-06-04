@@ -7,69 +7,71 @@
 namespace net {
 
 
-Machine::Machine(unix::NetAddress *addr, unsigned short portnum)
+MachineTask::MachineTask(unix::NetAddress *addr, unsigned short portnum)
     :
     socket(std::make_shared<unix::Socket>(addr, portnum)),
-    stream(socket.get()) {}
+    queue(std::make_shared<prot::Queue>(socket.get())) {}
 
 
-Machine::Machine(const Machine::socket_t &s)
+MachineTask::MachineTask(const MachineTask::socket_t &s)
     :
     socket(s),
-    stream(socket.get()) {}
+    queue(std::make_shared<prot::Queue>(socket.get())) {}
+
+
+bool MachineTask::connected() const {
+    return socket->open();
+}
+
+
+void MachineTask::log(const std::string &msg) const {
+    std::cout << "[" << socket->remote()->str() << "] " << msg << "\n";
+}
+
+
+MachineTask::socket_t MachineTask::connection() const {
+    return socket;
+}
+
+
+MachineTask::queue_t MachineTask::handler() const {
+    return queue;
+}
+
+
+void MachineTask::enable(prot::Context *ct) {
+    ct->add(queue);
+}
+
+
+Machine::Machine(Machine::context_t *ctxt, Machine::task_t ctrl)
+    :
+    context(ctxt),
+    control(ctrl) {}
 
 
 Machine::~Machine() {}
 
 
 Machine::key_t Machine::id() const {
-    return socket->remote()->str();
+    return control.connection()->remote()->str();
 }
 
 
 unix::NetAddress *Machine::addr() const {
-    return socket->remote();
+    return control.connection()->remote();
 }
 
 
-bool Machine::connected() const {
-    return stream.good();
+Machine::queue_t Machine::ctrlqueue() const {
+    return control.handler();
 }
 
 
-void Machine::log(const std::string &msg) const {
-    std::cout << "[" << id() << "] " << msg << "\n";
+void Machine::start(const MachineTask &m) {
+    tasks.push_back(m);
+    tasks.back().enable(context);
 }
 
-
-std::string Machine::pop() {
-    std::string buf;
-    stream.read_all(buf);
-    return buf;
-}
-
-
-Machine::messages_t Machine::poll() {
-    messages_t result;
-    bool parse = true;
-    while (parse) {
-        prot::Message msg;
-        parse = msg.read(stream);
-        if (parse) {
-            result.emplace_back(msg);
-        }
-    }
-    return result;
-}
-
-
-void Machine::send(prot::Message &msg) {
-    msg.write(stream);
-}
-
-
-void Machine::send(const std::string &msg) {
-    stream.write_all(msg);
-}
 
 }

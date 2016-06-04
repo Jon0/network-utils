@@ -23,6 +23,8 @@ public:
 	Socket(const NetAddress *l, const NetAddress *r, const filedesc_t &fd);
 	virtual ~Socket();
 
+	std::string rstr() const;
+
 	NetAddress *local() const;
 	NetAddress *remote() const;
 

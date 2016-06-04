@@ -11,7 +11,6 @@ class ClusterAcceptor : public prot::ContextItem {
 public:
     ClusterAcceptor(Cluster &c, unsigned short portnum);
     virtual ~ClusterAcceptor();
-    void accept();
 
     void update(prot::Context *c) override;
 
@@ -27,7 +26,6 @@ public:
     ClusterResponder(Cluster &c);
     virtual ~ClusterResponder();
 
-    std::string neighbors() const;
     std::string respond(const std::string &s) const;
 
     void update(prot::Context *c) override;

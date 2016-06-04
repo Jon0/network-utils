@@ -46,12 +46,12 @@ public:
 
     size_t size() const;
     std::vector<unix::NetAddress *> neighbors() const;
+    std::string neighborstr() const;
     Cluster operator+(const unit_t &m) const;
 
     void apply(const apply_t &a);
 
     void add_remote(const unit_t &remote);
-    void add_remote(std::shared_ptr<unix::Socket> remote);
 
 private:
     map_t ipmap;

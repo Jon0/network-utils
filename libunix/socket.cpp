@@ -73,6 +73,11 @@ Socket::Socket(const NetAddress *l, const NetAddress *r, const filedesc_t &fd)
 Socket::~Socket() {}
 
 
+std::string Socket::rstr() const {
+	return remote_addr->str();
+}
+
+
 NetAddress *Socket::local() const {
 	return local_addr.get();
 }

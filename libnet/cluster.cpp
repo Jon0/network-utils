@@ -77,6 +77,16 @@ std::vector<unix::NetAddress *> Cluster::neighbors() const {
 }
 
 
+std::string Cluster::neighborstr() const {
+    std::vector<unix::NetAddress *> n = neighbors();
+    std::string result = std::to_string(n.size());
+    for (auto a : n) {
+        result += ";" + a->str();
+    }
+    return result;
+}
+
+
 Cluster Cluster::operator+(const Cluster::unit_t &m) const {
     map_t result = ipmap;
     Cluster::insert(result, m);
@@ -93,11 +103,6 @@ void Cluster::apply(const Cluster::apply_t &a) {
 
 void Cluster::add_remote(const unit_t &remote) {
     Cluster::insert(ipmap, remote);
-}
-
-
-void Cluster::add_remote(std::shared_ptr<unix::Socket> remote) {
-    add_remote(Machine(remote));
 }
 
 
