@@ -10,13 +10,24 @@ namespace net {
 MachineTask::MachineTask(unix::NetAddress *addr, unsigned short portnum)
     :
     socket(std::make_shared<unix::Socket>(addr, portnum)),
-    queue(std::make_shared<prot::Queue>(socket.get())) {}
+    queue(std::make_shared<prot::Queue>(socket.get())) {
+    id = context->add(queue);
+}
 
 
 MachineTask::MachineTask(const MachineTask::socket_t &s)
     :
     socket(s),
-    queue(std::make_shared<prot::Queue>(socket.get())) {}
+    queue(std::make_shared<prot::Queue>(socket.get())) {
+    id = context->add(queue);
+}
+
+
+MachineTask::~MachineTask() {
+    if (id) {
+        context->remove(id);
+    }
+}
 
 
 bool MachineTask::connected() const {
@@ -40,14 +51,17 @@ MachineTask::queue_t MachineTask::handler() const {
 
 
 void MachineTask::enable(prot::Context *ct) {
-    ct->add(queue);
+    context = ct;
+    id = context->add(queue);
 }
 
 
 Machine::Machine(Machine::context_t *ctxt, Machine::task_t ctrl)
     :
     context(ctxt),
-    control(ctrl) {}
+    control(ctrl) {
+    control.enable(context);
+}
 
 
 Machine::~Machine() {}

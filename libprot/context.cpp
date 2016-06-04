@@ -29,9 +29,19 @@ void Context::stop() {
 }
 
 
-void Context::add(const ptr_t &i) {
+Context::id_t Context::add(const ptr_t &i) {
     std::lock_guard<std::mutex> lock(addlock);
-    addproc.insert(std::make_pair(next_id++, i));
+    id_t new_id = next_id++;
+    addproc.insert(std::make_pair(new_id, i));
+    return new_id;
+}
+
+
+void Context::remove(const id_t &i) {
+    std::lock_guard<std::mutex> lock(addlock);
+    if (runproc.count(i) > 0) {
+        rmproc.insert(std::make_pair(i, runproc.at(i)));
+    }
 }
 
 

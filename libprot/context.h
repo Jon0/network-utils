@@ -31,12 +31,13 @@ public:
 
     void run();
     void stop();
-    void add(const ptr_t &i);
+    id_t add(const ptr_t &i);
+    void remove(const id_t &i);
     void merge();
 
 private:
     size_t thread_count;
-    set_t runproc, addproc;
+    set_t runproc, addproc, rmproc;
     id_t next_id;
     std::mutex addlock;
 
