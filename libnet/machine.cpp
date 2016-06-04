@@ -9,12 +9,14 @@ namespace net {
 
 MachineTask::MachineTask(unix::NetAddress *addr, unsigned short portnum)
     :
+    id(0),
     socket(std::make_shared<unix::Socket>(addr, portnum)),
     queue(std::make_shared<prot::Queue>(socket.get())) {}
 
 
 MachineTask::MachineTask(const MachineTask::socket_t &s)
     :
+    id(0),
     socket(s),
     queue(std::make_shared<prot::Queue>(socket.get())) {}
 
