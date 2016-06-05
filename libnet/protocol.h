@@ -14,10 +14,25 @@ enum class operation_t {
     join
 };
 
-class Protocol : public prot::Message {
+
+class Request : public prot::Message {
 public:
-    Protocol();
-    virtual ~Protocol();
+    Request();
+    virtual ~Request();
+
+    std::string to_string() const override;
+    void from_string(const std::string &s) override;
+
+private:
+    std::string rstr;
+
+};
+
+
+class Response : public prot::Message {
+public:
+    Response();
+    virtual ~Response();
 
     std::string to_string() const override;
     void from_string(const std::string &s) override;

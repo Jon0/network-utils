@@ -2,17 +2,30 @@
 
 namespace net {
 
+Request::Request() {}
+Request::~Request() {}
 
-Protocol::Protocol() {}
-Protocol::~Protocol() {}
+
+std::string Request::to_string() const {
+    return rstr;
+}
 
 
-std::string Protocol::to_string() const {
+void Request::from_string(const std::string &s) {
+    rstr = s;
+}
+
+
+Response::Response() {}
+Response::~Response() {}
+
+
+std::string Response::to_string() const {
     return params;
 }
 
 
-void Protocol::from_string(const std::string &s) {
+void Response::from_string(const std::string &s) {
     params = s;
 }
 
