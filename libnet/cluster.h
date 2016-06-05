@@ -34,7 +34,8 @@ private:
 class Cluster {
 public:
     using unit_t = Machine;
-    using map_t = std::unordered_map<unit_t::key_t, unit_t>;
+    using key_t = typename unit_t::key_t;
+    using map_t = std::unordered_map<key_t, unit_t>;
     using apply_t = std::function<void (unit_t &)>;
 
     static void insert(map_t &map, const unit_t &unit);
@@ -52,7 +53,7 @@ public:
     void apply(const apply_t &a);
 
     void add_remote(const unit_t &remote);
-    void process_input(const unit_t &remote);
+    void process_input(key_t remote);
 
 private:
     map_t ipmap;

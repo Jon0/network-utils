@@ -105,16 +105,26 @@ void Cluster::add_remote(const unit_t &remote) {
     Cluster::insert(ipmap, remote);
 
     // queue initial task
-    process_input(remote);
+    process_input(remote.id());
 }
 
 
-void Cluster::process_input(const unit_t &remote) {
+void Cluster::process_input(key_t remote) {
+    auto m1 = ipmap.find(remote);
+    if (m1 == ipmap.end()) {
+        return;
+    }
     auto recv = std::make_shared<prot::Message>();
-    remote.ctrlqueue()->pushr(recv, [this, recv, &remote]() {
+    m1->second.ctrlqueue()->pushr(recv, [this, recv, remote]() {
         std::cout << "recv: " << recv->str() << "\n";
         auto reply = std::make_shared<prot::Message>(neighborstr());
-        remote.ctrlqueue()->pushw(reply);
+
+        auto m2 = ipmap.find(remote);
+        if (m2 == ipmap.end()) {
+            return true;
+        }
+        m2->second.ctrlqueue()->pushw(reply);
+        std::cout << "recv: " << recv->str() << "\n";
         process_input(remote);
         return true;
     });
