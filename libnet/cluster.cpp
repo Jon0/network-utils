@@ -114,17 +114,20 @@ void Cluster::process_input(key_t remote) {
     if (m1 == ipmap.end()) {
         return;
     }
-    auto recv = std::make_shared<prot::Message>();
+    auto recv = std::make_shared<Protocol>();
     m1->second.ctrlqueue()->pushr(recv, [this, recv, remote]() {
-        std::cout << "recv: " << recv->str() << "\n";
-        auto reply = std::make_shared<prot::Message>(neighborstr());
+        std::cout << "recv: " << recv->to_string() << "\n";
 
         auto m2 = ipmap.find(remote);
         if (m2 == ipmap.end()) {
             return true;
         }
+
+        auto reply = std::make_shared<Protocol>();
+        reply->init(recv->id(), neighborstr());
+
         m2->second.ctrlqueue()->pushw(reply);
-        std::cout << "recv: " << recv->str() << "\n";
+        std::cout << "recv: " << recv->to_string() << "\n";
         process_input(remote);
         return true;
     });

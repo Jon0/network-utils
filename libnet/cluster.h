@@ -5,10 +5,10 @@
 #include <unordered_map>
 
 #include <libutil/serial.h>
+#include <libunix/socket.h>
 
-#include "libprot/protocol.h"
-#include "libunix/socket.h"
 #include "machine.h"
+#include "protocol.h"
 
 namespace net {
 

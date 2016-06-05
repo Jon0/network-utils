@@ -29,10 +29,10 @@ size_t BinaryStream::available() {
 }
 
 
-std::string BinaryStream::peek_some(size_t len) {
+std::string BinaryStream::peek_some(size_t len, size_t offset) {
     sync_input();
-    ensure_available(len);
-    return strbuffer.substr(0, len);
+    ensure_available(offset + len);
+    return strbuffer.substr(offset, len);
 }
 
 
