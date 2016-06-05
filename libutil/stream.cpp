@@ -13,6 +13,11 @@ BinaryStream::BinaryStream(Channel *c)
 BinaryStream::~BinaryStream() {}
 
 
+std::string BinaryStream::name() const {
+    return c->name();
+}
+
+
 bool BinaryStream::good() const {
     return c->open();
 }

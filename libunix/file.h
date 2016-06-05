@@ -47,6 +47,7 @@ public:
     bool eof() const;
     bool poll(short events = POLLIN) const;
 
+    virtual std::string name() const override;
     virtual bool open() const override;
     bool readable() const override;
     bool writable() const override;

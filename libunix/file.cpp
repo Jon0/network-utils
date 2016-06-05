@@ -93,6 +93,11 @@ bool FileDesc::poll(short events) const {
 }
 
 
+std::string FileDesc::name() const {
+	return "fd " + std::to_string(fd);
+}
+
+
 bool FileDesc::open() const {
 	return !eof();
 }

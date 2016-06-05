@@ -30,6 +30,7 @@ public:
     BinaryStream(Channel *c);
     virtual ~BinaryStream();
 
+    std::string name() const;
     bool good() const;
 
     /**

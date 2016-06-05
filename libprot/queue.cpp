@@ -1,3 +1,5 @@
+#include <iostream>
+
 #include "queue.h"
 
 namespace prot {
@@ -42,11 +44,24 @@ bool Handler::apply(util::BinaryStream &stream) {
 
 Queue::Queue(util::Channel *c)
     :
-    stream(c) {}
+    stream(c) {
+    log("open");
+}
 
 
-Queue::~Queue() {}
+Queue::~Queue() {
+    log("close");
+}
 
+
+void Queue::log(const std::string &msg) const {
+    std::cout << "[" << stream.name() << "] " << msg << "\n";
+}
+
+
+void Queue::clear() {
+    queue = std::queue<Handler>();
+}
 
 void Queue::pushr(serial_t srl) {
     add(Handler(serial_mode_t::read, srl));

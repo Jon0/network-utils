@@ -17,6 +17,8 @@ public:
 
     virtual ~Channel() {}
 
+    virtual std::string name() const = 0;
+
     /**
      * Eof has not been reached
      */

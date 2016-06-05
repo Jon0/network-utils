@@ -43,7 +43,10 @@ public:
     using callback_t = typename Handler::callback_t;
 
     Queue(util::Channel *c);
-    ~Queue();
+    virtual ~Queue();
+
+    void log(const std::string &msg) const;
+    void clear();
 
     void pushr(serial_t srl);
     void pushr(serial_t srl, callback_t fn);

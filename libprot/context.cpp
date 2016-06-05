@@ -1,4 +1,6 @@
+#include <chrono>
 #include <iostream>
+#include <thread>
 
 #include "context.h"
 
@@ -20,6 +22,7 @@ void Context::run() {
             p.second->update(this);
         }
         merge();
+        std::this_thread::sleep_for(std::chrono::seconds(1));
     }
 }
 

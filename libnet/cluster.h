@@ -52,6 +52,7 @@ public:
     void apply(const apply_t &a);
 
     void add_remote(const unit_t &remote);
+    void process_input(const unit_t &remote);
 
 private:
     map_t ipmap;
