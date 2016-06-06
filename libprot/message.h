@@ -15,6 +15,7 @@ public:
     virtual ~Message() = default;
 
     id_t id() const;
+    void init();
     void init(const Message &msg);
     void init(int32_t newid, const std::string &msg);
 

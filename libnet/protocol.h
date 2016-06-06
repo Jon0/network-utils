@@ -9,7 +9,7 @@
 namespace net {
 
 
-enum class operation_t {
+enum class op_t {
     neighbors,
     join
 };
@@ -18,12 +18,14 @@ enum class operation_t {
 class Request : public prot::Message {
 public:
     Request();
+    Request(const op_t &op);
     virtual ~Request();
 
     std::string to_string() const override;
     void from_string(const std::string &s) override;
 
 private:
+    op_t type;
     std::string rstr;
 
 };
@@ -38,7 +40,7 @@ public:
     void from_string(const std::string &s) override;
 
 private:
-    operation_t instruction;
+    op_t type;
     std::string params;
 
 };

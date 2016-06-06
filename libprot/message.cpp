@@ -15,6 +15,12 @@ Message::id_t Message::id() const {
     return id_value;
 }
 
+
+void Message::init() {
+    initialised = true;
+}
+
+
 void Message::init(const Message &msg) {
     init(msg.id_value, msg.to_string());
 }
@@ -23,7 +29,7 @@ void Message::init(const Message &msg) {
 void Message::init(int32_t newid, const std::string &msg) {
     id_value = newid;
     from_string(msg);
-    initialised = true;
+    init();
 }
 
 

@@ -57,6 +57,7 @@ void MachineTask::enable(prot::Context *ct) {
 
 Machine::Machine(Machine::context_t *ctxt, Machine::task_t ctrl)
     :
+    is_server(false),
     context(ctxt),
     control(ctrl) {
     control.enable(context);
@@ -68,6 +69,11 @@ Machine::~Machine() {}
 
 Machine::key_t Machine::id() const {
     return control.connection()->remote()->str();
+}
+
+
+bool Machine::server() const {
+    return is_server;
 }
 
 

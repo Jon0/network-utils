@@ -3,6 +3,15 @@
 namespace net {
 
 Request::Request() {}
+
+
+Request::Request(const op_t &op)
+    :
+    type(op) {
+    init();
+}
+
+
 Request::~Request() {}
 
 

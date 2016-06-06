@@ -62,12 +62,14 @@ public:
     virtual ~Machine();
 
     key_t id() const;
+    bool server() const;
     unix::NetAddress *addr() const;
     queue_t ctrlqueue() const;
 
     void start(const MachineTask &m);
 
 private:
+    bool is_server;
     context_t *context;
     MachineAttr attributes;
     task_t control;

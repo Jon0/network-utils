@@ -71,7 +71,9 @@ size_t Cluster::size() const {
 std::vector<unix::NetAddress *> Cluster::neighbors() const {
     std::vector<unix::NetAddress *> result;
     for (auto &u : ipmap) {
-        result.emplace_back(u.second.addr());
+        if (u.second.server()) {
+            result.emplace_back(u.second.addr());
+        }
     }
     return result;
 }
