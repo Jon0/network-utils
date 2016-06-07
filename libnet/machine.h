@@ -10,6 +10,12 @@
 namespace net {
 
 
+struct host_addr {
+    std::shared_ptr<unix::NetAddress> ip;
+
+};
+
+
 class MachineAttr {
 public:
 
@@ -26,7 +32,7 @@ public:
     using id_t = typename prot::Context::id_t;
     using socket_t = std::shared_ptr<unix::Socket>;
     using queue_t = std::shared_ptr<prot::Queue>;
-    using messages_t = std::vector<prot::Message>;
+    using messages_t = std::vector<util::Stringable>;
 
     MachineTask(unix::NetAddress *addr, unsigned short portnum);
     MachineTask(const socket_t &s);

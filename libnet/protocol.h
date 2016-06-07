@@ -6,6 +6,8 @@
 
 #include "libprot/message.h"
 
+#include "host.h"
+
 namespace net {
 
 
@@ -15,7 +17,29 @@ enum class op_t {
 };
 
 
-class Request : public prot::Message {
+class Message : public util::Stringable {
+public:
+    using element_t = util::Stringable *;
+    using elements_t = std::vector<element_t>;
+
+    Message();
+    virtual ~Message();
+
+    std::string to_string() const override;
+    void from_string(const std::string &s) override;
+
+    virtual void get(elements_t *e) = 0;
+    virtual void set(elements_t *e) = 0;
+
+private:
+    Host h;
+    int64_t id;
+    elements_t elems;
+
+};
+
+
+class Request : public util::Stringable {
 public:
     Request();
     Request(const op_t &op);
@@ -31,7 +55,7 @@ private:
 };
 
 
-class Response : public prot::Message {
+class Response : public util::Stringable {
 public:
     Response();
     virtual ~Response();

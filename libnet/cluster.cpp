@@ -126,7 +126,7 @@ void Cluster::process_input(key_t remote) {
         }
 
         auto reply = std::make_shared<Response>();
-        reply->init(recv->id(), neighborstr());
+        reply->init(neighborstr());
 
         m2->second.ctrlqueue()->pushw(reply);
         std::cout << "recv: " << recv->to_string() << "\n";
