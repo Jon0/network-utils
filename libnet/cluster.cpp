@@ -116,7 +116,7 @@ void Cluster::process_input(key_t remote) {
     if (m1 == ipmap.end()) {
         return;
     }
-    auto recv = std::make_shared<Request>();
+    auto recv = std::make_shared<Message>();
     m1->second.ctrlqueue()->pushr(recv, [this, recv, remote]() {
         std::cout << "recv: " << recv->to_string() << "\n";
 
@@ -125,11 +125,12 @@ void Cluster::process_input(key_t remote) {
             return true;
         }
 
-        auto reply = std::make_shared<Response>();
-        reply->init(neighborstr());
+        auto reply = recv->op().apply(recv.get(), this);
+        if (reply) {
+            m2->second.ctrlqueue()->pushw(reply);
+        }
 
-        m2->second.ctrlqueue()->pushw(reply);
-        std::cout << "recv: " << recv->to_string() << "\n";
+        // continue reading
         process_input(remote);
         return true;
     });

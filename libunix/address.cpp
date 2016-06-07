@@ -30,6 +30,15 @@ IPv6 parse_ipv6(const std::string &host) {
 }
 
 
+std::unique_ptr<NetAddress> nullcpy(NetAddress *a) {
+    if (a) {
+        return a->copy();
+    }
+    else {
+        return nullptr;
+    }
+}
+
 IPv4::IPv4(const unsigned char addr[IPv4::bytesize])
     :
     addr(util::to_array<unsigned char, IPv4::bytesize>(addr)) {}

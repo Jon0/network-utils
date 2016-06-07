@@ -3,10 +3,23 @@
 namespace net {
 
 
+Host this_host() {
+    return Host(host_t::alias, "hostname");
+}
+
+
 Host::Host()
     :
     addr(nullptr) {}
 
+
+Host::Host(const Host &h)
+    :
+    type(h.type),
+    name(h.name),
+    addr(unix::nullcpy(h.addr.get())) {
+    init();
+}
 
 Host::Host(const host_t &t, const std::string &n)
     :

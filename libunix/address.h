@@ -94,6 +94,9 @@ IPv4 parse_ipv4(const std::string &host);
 IPv6 parse_ipv6(const std::string &host);
 
 
+std::unique_ptr<NetAddress> nullcpy(NetAddress *a);
+
+
 }
 
 

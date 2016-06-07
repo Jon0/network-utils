@@ -11,61 +11,68 @@
 namespace net {
 
 
+class Cluster;
+class Message;
+
+
 enum class op_t {
-    neighbors,
+    neighbor_req,
+    neighbor_rsp,
     join
 };
 
 
-class Message : public util::Stringable {
+class ClusterOp : public util::Stringable {
 public:
-    using element_t = util::Stringable *;
-    using elements_t = std::vector<element_t>;
+    using reply_t = std::shared_ptr<Message>;
 
+    ClusterOp();
+    ClusterOp(const ClusterOp &c);
+    ClusterOp(const op_t &t);
+    virtual ~ClusterOp();
+
+    reply_t apply(Message *src, Cluster *cl) const;
+
+    std::string to_string() const override;
+    void from_string(const std::string &s) override;
+
+private:
+    op_t optype;
+};
+
+
+class Message : public util::StringList {
+public:
     Message();
+    Message(const Message &m);
+    Message(const Host &h, int64_t id, const ClusterOp &op);
     virtual ~Message();
 
-    std::string to_string() const override;
-    void from_string(const std::string &s) override;
+    ClusterOp &op();
 
-    virtual void get(elements_t *e) = 0;
-    virtual void set(elements_t *e) = 0;
+    std::vector<const util::Stringable *> to_array() const override;
+    util::Stringable *at(size_t e) override;
 
 private:
-    Host h;
-    int64_t id;
-    elements_t elems;
+    Host source;
+    util::Block<int64_t> id;
+    ClusterOp msg;
 
 };
 
 
-class Request : public util::Stringable {
+class MessageSrc {
 public:
-    Request();
-    Request(const op_t &op);
-    virtual ~Request();
+    using msg_t = std::shared_ptr<Message>;
 
-    std::string to_string() const override;
-    void from_string(const std::string &s) override;
+    MessageSrc();
+    virtual ~MessageSrc();
+
+    msg_t create(const op_t &t);
 
 private:
-    op_t type;
-    std::string rstr;
-
-};
-
-
-class Response : public util::Stringable {
-public:
-    Response();
-    virtual ~Response();
-
-    std::string to_string() const override;
-    void from_string(const std::string &s) override;
-
-private:
-    op_t type;
-    std::string params;
+    Host host;
+    int64_t next_id;
 
 };
 

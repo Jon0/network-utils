@@ -58,4 +58,75 @@ bool Stringable::write(util::BinaryStream &s) {
 }
 
 
+String::String() {}
+String::String(const std::string &s)
+    :
+    str(s) {
+    init();
+}
+
+
+String::~String() {}
+
+
+std::string String::to_string() const {
+    return str;
+}
+
+
+void String::from_string(const std::string &s) {
+    str = s;
+}
+
+
+StringList::StringList() {}
+StringList::~StringList() {}
+
+
+std::string StringList::to_string() const {
+    array_t arr = to_array();
+    std::string result;
+    result += itobs(arr.size());
+    for (auto &s : arr) {
+        std::string elem = s->to_string();
+        result += itobs(elem.size());
+        result += elem;
+    }
+    return result;
+}
+
+
+void StringList::from_string(const std::string &s) {
+    int_t length = bstoi(s);
+    size_t offset = sizeof(int_t);
+    for (int i = 0; i < length && offset < s.size(); ++i) {
+        std::string elem = s.substr(offset);
+        size_t esize = bstoi(elem);
+        Stringable *st = at(i);
+        if (st) {
+            st->from_string(elem.substr(sizeof(int_t), esize));
+            offset += sizeof(int_t) + esize;
+        }
+        else {
+            std::cout << "Reading input failed\n";
+            return;
+        }
+    }
+}
+
+
+StringList::int_t StringList::bstoi(const std::string &s) const {
+    int_t result;
+    std::memcpy(&result, s.c_str(), sizeof(int_t));
+    return result;
+}
+
+
+std::string StringList::itobs(const StringList::int_t &i) const {
+    char result [sizeof(int_t)];
+    std::memcpy(&result, &i, sizeof(int_t));
+    return std::string(result, sizeof(int_t));
+}
+
+
 }

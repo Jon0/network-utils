@@ -16,6 +16,7 @@ enum class host_t {
 class Host : public util::Stringable {
 public:
     Host();
+    Host(const Host &h);
     Host(const host_t &t, const std::string &n);
     Host(unix::NetAddress *a);
     virtual ~Host();
@@ -32,5 +33,9 @@ private:
     std::unique_ptr<unix::NetAddress> addr;
 
 };
+
+
+Host this_host();
+
 
 };

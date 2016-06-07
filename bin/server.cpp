@@ -12,16 +12,16 @@ void join_thread(const std::string &host, int portnum) {
     prot::Context process;
     unix::IPv4 ip = unix::parse_ipv4(host);
     net::Machine m(&process, net::MachineTask(&ip, portnum));
-    auto msg = std::make_shared<net::Request>();
-    msg->init("reqn");
+
+    net::MessageSrc msrc;
+    auto msg = msrc.create(net::op_t::neighbor_req);
     m.ctrlqueue()->pushw(msg);
 
     // read response
-    auto rsp = std::make_shared<net::Response>();
-    m.ctrlqueue()->pushr(rsp, [&m, rsp]() {
+    auto rsp = std::make_shared<net::Message>();
+    m.ctrlqueue()->pushr(rsp, [&m, &msrc, rsp]() {
         std::cout << "recv: " << rsp->to_string() << "\n";
-        auto join = std::make_shared<net::Request>();
-        join->init("join");
+        auto join = msrc.create(net::op_t::join);
         m.ctrlqueue()->pushw(join);
         return true;
     });
