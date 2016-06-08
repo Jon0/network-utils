@@ -24,31 +24,36 @@ enum class op_t {
 
 class ClusterOp : public util::Stringable {
 public:
-    using reply_t = std::shared_ptr<Message>;
+    using msg_t = std::shared_ptr<Message>;
 
     ClusterOp();
     ClusterOp(const ClusterOp &c);
-    ClusterOp(const op_t &t);
+    ClusterOp(const op_t &t, const std::string &data);
     virtual ~ClusterOp();
 
-    reply_t apply(Message *src, Cluster *cl) const;
+    msg_t apply(Message *src, Cluster *cl) const;
 
     std::string to_string() const override;
     void from_string(const std::string &s) override;
 
 private:
     op_t optype;
+    std::string msgdata;
+
 };
 
 
 class Message : public util::StringList {
 public:
+    using msg_t = std::shared_ptr<Message>;
+
     Message();
     Message(const Message &m);
     Message(const Host &h, int64_t id, const ClusterOp &op);
     virtual ~Message();
 
     ClusterOp &op();
+    msg_t reply(const ClusterOp &newop);
 
     std::vector<const util::Stringable *> to_array() const override;
     util::Stringable *at(size_t e) override;

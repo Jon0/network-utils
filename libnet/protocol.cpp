@@ -14,7 +14,7 @@ ClusterOp::ClusterOp(const ClusterOp &c)
 }
 
 
-ClusterOp::ClusterOp(const op_t &t)
+ClusterOp::ClusterOp(const op_t &t, const std::string &data)
     :
     optype(t) {
     init();
@@ -24,10 +24,9 @@ ClusterOp::ClusterOp(const op_t &t)
 ClusterOp::~ClusterOp() {}
 
 
-ClusterOp::reply_t ClusterOp::apply(Message *src, Cluster *cl) const {
+ClusterOp::msg_t ClusterOp::apply(Message *src, Cluster *cl) const {
     if (optype == op_t::neighbor_req) {
-        auto reply = std::make_shared<Message>();
-        reply->init(cl->neighborstr());
+        auto reply = src->reply(ClusterOp(op_t::neighbor_rsp, cl->neighborstr()));
         return reply;
     }
     return nullptr;
@@ -37,20 +36,22 @@ ClusterOp::reply_t ClusterOp::apply(Message *src, Cluster *cl) const {
 std::string ClusterOp::to_string() const {
     switch (optype) {
     case op_t::neighbor_req:
-        return "nreq";
+        return "nreq" + msgdata;
     case op_t::neighbor_rsp:
-            return "nrsp";
+            return "nrsp" + msgdata;
     case op_t::join:
-        return "join";
+        return "join" + msgdata;
     }
 }
 
 
 void ClusterOp::from_string(const std::string &s) {
-    if (s == "nreq") {
+    std::string type = s.substr(0, 4);
+    msgdata = s.substr(4);
+    if (type == "nreq") {
         optype = op_t::neighbor_req;
     }
-    else if (s == "nrsp") {
+    else if (type == "nrsp") {
         optype = op_t::neighbor_rsp;
     }
     else {
@@ -81,6 +82,11 @@ Message::~Message() {}
 
 ClusterOp &Message::op() {
     return msg;
+}
+
+
+Message::msg_t Message::reply(const ClusterOp &newop) {
+    return std::make_shared<Message>(source, id.get(), newop);
 }
 
 
@@ -117,7 +123,7 @@ MessageSrc::~MessageSrc() {}
 
 
 MessageSrc::msg_t MessageSrc::create(const op_t &t) {
-    return std::make_shared<Message>(host, next_id++, ClusterOp(t));
+    return std::make_shared<Message>(host, next_id++, ClusterOp(t, ""));
 }
 
 
