@@ -37,6 +37,10 @@ Host::Host(unix::NetAddress *a)
 Host::~Host() {}
 
 
+std::string Host::desc() const {
+    return name;
+}
+
 unix::NetAddress *Host::resolve() const {
     if (addr) {
         return addr.get();

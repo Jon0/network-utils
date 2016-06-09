@@ -18,7 +18,8 @@ class Message;
 enum class op_t {
     neighbor_req,
     neighbor_rsp,
-    join
+    join_req,
+    join_rsp
 };
 
 
@@ -31,6 +32,7 @@ public:
     ClusterOp(const op_t &t, const std::string &data);
     virtual ~ClusterOp();
 
+    std::string desc() const;
     msg_t apply(Message *src, Cluster *cl) const;
 
     std::string to_string() const override;
@@ -52,6 +54,7 @@ public:
     Message(const Host &h, int64_t id, const ClusterOp &op);
     virtual ~Message();
 
+    std::string desc() const;
     ClusterOp &op();
     msg_t reply(const ClusterOp &newop);
 
@@ -73,7 +76,7 @@ public:
     MessageSrc();
     virtual ~MessageSrc();
 
-    msg_t create(const op_t &t);
+    msg_t create(const ClusterOp &o);
 
 private:
     Host host;

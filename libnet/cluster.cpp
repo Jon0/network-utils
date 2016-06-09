@@ -20,12 +20,10 @@ bool Neighbors::read(util::BinaryStream &s) {
         return false;
     }
     int32_t length = s.peek_type<int32_t>();
-    std::cout << "Length is " << length << "\n";
     if (s.available() < length) {
         return false;
     }
     std::string buf = s.read_some(length);
-    std::cout << "recv: " << buf << "\n";
     return true;
 }
 
@@ -118,7 +116,7 @@ void Cluster::process_input(key_t remote) {
     }
     auto recv = std::make_shared<Message>();
     m1->second.ctrlqueue()->pushr(recv, [this, recv, remote]() {
-        std::cout << "recv: " << recv->to_string() << "\n";
+        std::cout << recv->desc() << "\n";
 
         auto m2 = ipmap.find(remote);
         if (m2 == ipmap.end()) {

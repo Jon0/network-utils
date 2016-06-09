@@ -21,6 +21,7 @@ public:
     Host(unix::NetAddress *a);
     virtual ~Host();
 
+    std::string desc() const;
     unix::NetAddress *resolve() const;
     unix::NetAddress *lookup_dns() const;
 

@@ -24,10 +24,26 @@ ClusterOp::ClusterOp(const op_t &t, const std::string &data)
 ClusterOp::~ClusterOp() {}
 
 
+std::string ClusterOp::desc() const {
+    switch (optype) {
+    case op_t::neighbor_req:
+        return "neighbors request (" + msgdata + ")";
+    case op_t::neighbor_rsp:
+            return "neighbors response (" + msgdata + ")";
+    case op_t::join_req:
+        return "join request (" + msgdata + ")";
+    case op_t::join_rsp:
+        return "join response (" + msgdata + ")";
+    }
+}
+
+
 ClusterOp::msg_t ClusterOp::apply(Message *src, Cluster *cl) const {
     if (optype == op_t::neighbor_req) {
-        auto reply = src->reply(ClusterOp(op_t::neighbor_rsp, cl->neighborstr()));
-        return reply;
+        return src->reply(ClusterOp(op_t::neighbor_rsp, cl->neighborstr()));
+    }
+    else if (optype == op_t::join_req) {
+        return src->reply(ClusterOp(op_t::join_rsp, ""));
     }
     return nullptr;
 }
@@ -39,8 +55,10 @@ std::string ClusterOp::to_string() const {
         return "nreq" + msgdata;
     case op_t::neighbor_rsp:
             return "nrsp" + msgdata;
-    case op_t::join:
+    case op_t::join_req:
         return "join" + msgdata;
+    case op_t::join_rsp:
+        return "jrsp" + msgdata;
     }
 }
 
@@ -54,8 +72,11 @@ void ClusterOp::from_string(const std::string &s) {
     else if (type == "nrsp") {
         optype = op_t::neighbor_rsp;
     }
+    else if (type == "join") {
+        optype = op_t::join_req;
+    }
     else {
-        optype = op_t::join;
+        optype = op_t::join_rsp;
     }
 }
 
@@ -78,6 +99,11 @@ Message::Message(const Host &h, int64_t id, const ClusterOp &op)
 
 
 Message::~Message() {}
+
+
+std::string Message::desc() const {
+    return "[" + source.desc() + ", " + std::to_string(id.get()) + "]" + msg.desc();
+ }
 
 
 ClusterOp &Message::op() {
@@ -122,8 +148,8 @@ MessageSrc::MessageSrc()
 MessageSrc::~MessageSrc() {}
 
 
-MessageSrc::msg_t MessageSrc::create(const op_t &t) {
-    return std::make_shared<Message>(host, next_id++, ClusterOp(t, ""));
+MessageSrc::msg_t MessageSrc::create(const ClusterOp &o) {
+    return std::make_shared<Message>(host, next_id++, o);
 }
 
 

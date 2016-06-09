@@ -14,14 +14,14 @@ void join_thread(const std::string &host, int portnum) {
     net::Machine m(&process, net::MachineTask(&ip, portnum));
 
     net::MessageSrc msrc;
-    auto msg = msrc.create(net::op_t::neighbor_req);
+    auto msg = msrc.create(net::ClusterOp(net::op_t::neighbor_req, ""));
     m.ctrlqueue()->pushw(msg);
 
     // read response
     auto rsp = std::make_shared<net::Message>();
     m.ctrlqueue()->pushr(rsp, [&m, &msrc, rsp]() {
-        std::cout << "recv: " << rsp->to_string() << "\n";
-        auto join = msrc.create(net::op_t::join);
+        std::cout << rsp->desc() << "\n";
+        auto join = msrc.create(net::ClusterOp(net::op_t::join_req, ""));
         m.ctrlqueue()->pushw(join);
         return true;
     });
