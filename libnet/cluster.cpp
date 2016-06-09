@@ -116,8 +116,6 @@ void Cluster::process_input(key_t remote) {
     }
     auto recv = std::make_shared<Message>();
     m1->second.ctrlqueue()->pushr(recv, [this, recv, remote]() {
-        std::cout << recv->desc() << "\n";
-
         auto m2 = ipmap.find(remote);
         if (m2 == ipmap.end()) {
             return true;
