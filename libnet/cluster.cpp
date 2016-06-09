@@ -69,7 +69,10 @@ size_t Cluster::size() const {
 
 
 std::string Cluster::status() const {
-    return "{" + util::concat(util::intersperse(std::string(", "), neighbor_str())) + "}";
+    std::vector<std::string> ns = neighbor_str();
+    std::string str = std::to_string(ns.size());
+    //std::string str = util::concat(util::intersperse(std::string(", "), ns));
+    return "{" + str + "}";
 }
 
 
