@@ -1,5 +1,3 @@
-#include <iostream>
-
 #include "cluster.h"
 #include "protocol.h"
 
@@ -11,14 +9,15 @@ ClusterOp::ClusterOp() {}
 
 ClusterOp::ClusterOp(const ClusterOp &c)
     :
-    optype(c.optype) {
+    ClusterOp(c.optype, c.msgdata) {
     init();
 }
 
 
 ClusterOp::ClusterOp(const op_t &t, const std::string &data)
     :
-    optype(t) {
+    optype(t),
+    msgdata(data) {
     init();
 }
 
@@ -41,9 +40,8 @@ std::string ClusterOp::desc() const {
 
 
 ClusterOp::msg_t ClusterOp::apply(Message *src, Cluster *cl) const {
-    std::cout << src->desc() << " applied\n";
     if (optype == op_t::neighbor_req) {
-        return src->reply(ClusterOp(op_t::neighbor_rsp, cl->neighborstr()));
+        return src->reply(ClusterOp(op_t::neighbor_rsp, cl->neighbor_out()));
     }
     else if (optype == op_t::join_req) {
         return src->reply(ClusterOp(op_t::join_rsp, ""));

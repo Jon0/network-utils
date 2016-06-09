@@ -1,6 +1,8 @@
 #include <algorithm>
 #include <iostream>
 
+#include <libutil/strings.h>
+
 #include "cluster.h"
 
 namespace net {
@@ -66,6 +68,11 @@ size_t Cluster::size() const {
 }
 
 
+std::string Cluster::status() const {
+    return "{" + util::concat(util::intersperse(std::string(", "), neighbor_str())) + "}";
+}
+
+
 std::vector<unix::NetAddress *> Cluster::neighbors() const {
     std::vector<unix::NetAddress *> result;
     for (auto &u : ipmap) {
@@ -77,7 +84,16 @@ std::vector<unix::NetAddress *> Cluster::neighbors() const {
 }
 
 
-std::string Cluster::neighborstr() const {
+std::vector<std::string> Cluster::neighbor_str() const {
+    std::vector<std::string> result;
+    for (auto &n : neighbors()) {
+        result.push_back(n->str());
+    }
+    return result;
+}
+
+
+std::string Cluster::neighbor_out() const {
     std::vector<unix::NetAddress *> n = neighbors();
     std::string result = std::to_string(n.size());
     for (auto a : n) {
@@ -125,6 +141,10 @@ void Cluster::process_input(key_t remote) {
         if (reply) {
             m2->second.ctrlqueue()->pushw(reply);
         }
+
+        // output result
+        std::cout << recv->desc() << " applied\n";
+        std::cout << status() << "\n";
 
         // continue reading
         process_input(remote);

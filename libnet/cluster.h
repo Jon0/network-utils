@@ -46,8 +46,10 @@ public:
     virtual ~Cluster();
 
     size_t size() const;
+    std::string status() const;
     std::vector<unix::NetAddress *> neighbors() const;
-    std::string neighborstr() const;
+    std::vector<std::string> neighbor_str() const;
+    std::string neighbor_out() const;
     Cluster operator+(const unit_t &m) const;
 
     void apply(const apply_t &a);
