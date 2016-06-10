@@ -31,6 +31,7 @@ constexpr int addrtov(const AddressType &a) {
 class NetAddress {
 public:
 	virtual ~NetAddress() {}
+	virtual bool operator==(const NetAddress &a) const = 0;
 	virtual AddressType type() const = 0;
 	virtual std::string str() const = 0;
 	virtual std::unique_ptr<NetAddress> copy() const = 0;
@@ -47,11 +48,10 @@ public:
 	IPv4(const std::array<unsigned char, bytesize> &addr);
 	virtual ~IPv4();
 
-	bool operator==(const IPv4 &ip) const;
-
 	std::array<unsigned char, bytesize> parts() const;
 	addrport_t port(unsigned short portnum) const;
 
+	bool operator==(const NetAddress &a) const override;
 	AddressType type() const override;
 	std::string str() const override;
 	std::unique_ptr<NetAddress> copy() const override;
@@ -72,11 +72,10 @@ public:
 	IPv6(const std::array<unsigned char, bytesize> &addr);
 	virtual ~IPv6();
 
-	bool operator==(const IPv6 &ip) const;
-
 	std::array<unsigned char, bytesize> parts() const;
 	addrport_t port(unsigned short portnum) const;
 
+	bool operator==(const NetAddress &a) const override;
 	AddressType type() const override;
 	std::string str() const override;
 	std::unique_ptr<NetAddress> copy() const override;
@@ -117,6 +116,21 @@ struct hash<unix::IPv6> {
     size_t operator()(const unix::IPv6 &ip) const {
         hash<array<unsigned char, unix::IPv6::bytesize>> hash;
         return hash(ip.parts());
+    }
+};
+
+
+template<>
+struct hash<unix::NetAddress> {
+    size_t operator()(const unix::NetAddress &a) const {
+		if (a.type() == unix::AddressType::ipv4) {
+			hash<unix::IPv4> hash;
+	        return hash(reinterpret_cast<const unix::IPv4 &>(a));
+		}
+		else if (a.type() == unix::AddressType::ipv6) {
+			hash<unix::IPv6> hash;
+			return hash(reinterpret_cast<const unix::IPv6 &>(a));
+		}
     }
 };
 

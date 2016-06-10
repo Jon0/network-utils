@@ -59,7 +59,8 @@ Machine::Machine(Machine::context_t *ctxt, Machine::task_t ctrl)
     :
     is_server(false),
     context(ctxt),
-    control(ctrl) {
+    control(ctrl),
+    hostname(control.connection()->remote()) {
     control.enable(context);
 }
 
@@ -67,8 +68,8 @@ Machine::Machine(Machine::context_t *ctxt, Machine::task_t ctrl)
 Machine::~Machine() {}
 
 
-Machine::key_t Machine::id() const {
-    return control.connection()->remote()->str();
+Host Machine::host() const {
+    return hostname;
 }
 
 

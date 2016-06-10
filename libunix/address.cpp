@@ -39,6 +39,7 @@ std::unique_ptr<NetAddress> nullcpy(NetAddress *a) {
     }
 }
 
+
 IPv4::IPv4(const unsigned char addr[IPv4::bytesize])
     :
     addr(util::to_array<unsigned char, IPv4::bytesize>(addr)) {}
@@ -50,11 +51,6 @@ IPv4::IPv4(const std::array<unsigned char, IPv4::bytesize> &addr)
 
 
 IPv4::~IPv4() {}
-
-
-bool IPv4::operator==(const IPv4 &ip) const {
-	return addr == ip.addr;
-}
 
 
 std::array<unsigned char, IPv4::bytesize> IPv4::parts() const {
@@ -77,6 +73,14 @@ IPv4::addrport_t IPv4::port(unsigned short portnum) const {
 	serv_addr.sin_port = htons(portnum);
     std::memcpy(&serv_addr.sin_addr, &addr.at(0), IPv4::bytesize);
     return serv_addr;
+}
+
+
+bool IPv4::operator==(const NetAddress &a) const {
+    if (a.type() == AddressType::ipv4) {
+        return addr == reinterpret_cast<const IPv4 &>(a).addr;
+    }
+	return false;
 }
 
 
@@ -113,11 +117,6 @@ IPv6::IPv6(const std::array<unsigned char, IPv6::bytesize> &addr)
 IPv6::~IPv6() {}
 
 
-bool IPv6::operator==(const IPv6 &ip) const {
-	return addr == ip.addr;
-}
-
-
 std::array<unsigned char, IPv6::bytesize> IPv6::parts() const {
 	return addr;
 }
@@ -138,6 +137,14 @@ IPv6::addrport_t IPv6::port(unsigned short portnum) const {
     serv_addr.sin6_port = htons(portnum);
     std::memcpy(&serv_addr.sin6_addr, &addr.at(0), IPv6::bytesize);
     return serv_addr;
+}
+
+
+bool IPv6::operator==(const NetAddress &a) const {
+    if (a.type() == AddressType::ipv6) {
+        return addr == reinterpret_cast<const IPv6 &>(a).addr;
+    }
+    return false;
 }
 
 

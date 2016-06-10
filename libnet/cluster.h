@@ -34,10 +34,11 @@ private:
 class Cluster {
 public:
     using unit_t = Machine;
-    using key_t = typename unit_t::key_t;
+    using key_t = Host;
     using map_t = std::unordered_map<key_t, unit_t>;
     using apply_t = std::function<void (unit_t &)>;
 
+    static key_t get_key(const unit_t &unit);
     static void insert(map_t &map, const unit_t &unit);
     static map_t list_to_map(const std::initializer_list<unit_t> &m);
 
@@ -50,7 +51,6 @@ public:
     std::vector<unix::NetAddress *> neighbors() const;
     std::vector<std::string> neighbor_str() const;
     std::string neighbor_out() const;
-    Cluster operator+(const unit_t &m) const;
 
     void apply(const apply_t &a);
 
@@ -59,7 +59,7 @@ public:
 
 private:
     map_t ipmap;
-
+    map_t client, server;
 
 };
 

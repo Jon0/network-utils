@@ -6,6 +6,7 @@
 #include <libutil/stream.h>
 
 #include "channel.h"
+#include "host.h"
 
 namespace net {
 
@@ -58,7 +59,6 @@ private:
 class Machine {
 public:
     using context_t = prot::Context;
-    using key_t = std::string;
     using task_t = MachineTask;
     using queue_t = typename task_t::queue_t;
     using tasklist_t = std::vector<task_t>;
@@ -67,7 +67,7 @@ public:
     Machine(context_t *ctxt, task_t ctrl);
     virtual ~Machine();
 
-    key_t id() const;
+    Host host() const;
     bool server() const;
     unix::NetAddress *addr() const;
     queue_t ctrlqueue() const;
@@ -80,6 +80,7 @@ private:
     MachineAttr attributes;
     task_t control;
     tasklist_t tasks;
+    Host hostname;
     std::string input;
 
 };

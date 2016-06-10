@@ -24,7 +24,8 @@ Host::Host(const Host &h)
 Host::Host(const host_t &t, const std::string &n)
     :
     type(t),
-    name(n) {
+    name(n),
+    addr(resolve()){
     init();
 }
 
@@ -37,22 +38,23 @@ Host::Host(unix::NetAddress *a)
 Host::~Host() {}
 
 
+bool Host::operator==(const Host &h) const {
+    return *address() == *h.address();
+}
+
+
 std::string Host::desc() const {
     return name;
 }
 
-unix::NetAddress *Host::resolve() const {
-    if (addr) {
-        return addr.get();
-    }
-    else {
-        return lookup_dns();
-    }
+
+unix::NetAddress *Host::address() const {
+    return addr.get();
 }
 
 
-unix::NetAddress *Host::lookup_dns() const {
-    return nullptr;
+std::unique_ptr<unix::NetAddress> Host::resolve() const {
+    return std::make_unique<unix::IPv4>(std::array<unsigned char, 4>({0, 0, 0, 0}));
 }
 
 
