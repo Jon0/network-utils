@@ -8,6 +8,15 @@
 #include <libnet/process.h>
 
 
+void start_loop(const std::vector<std::string> &hosts, int portnum) {
+    // connect to each remote
+
+    // listen for connections
+
+}
+
+
+
 void join_thread(const std::string &host, int portnum) {
     prot::Context process;
     unix::IPv4 ip = unix::parse_ipv4(host);

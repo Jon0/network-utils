@@ -40,7 +40,7 @@ private:
 Host this_host();
 
 
-};
+}
 
 
 namespace std {
